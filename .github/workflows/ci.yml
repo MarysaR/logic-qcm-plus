@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code source (checkout)
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js (version 20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installation des dépendances (npm ci)
+        run: npm ci
+
+      - name: Compilation du code TypeScript
+        run: npm run build
+
+      - name: Analyse statique avec ESLint
+        run: npm run lint
+
+      - name: Vérification du formatage avec Prettier
+        run: npm run format -- --check
+
+      - name: Exécution des tests unitaires avec Jest
+        run: npm run test
