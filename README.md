@@ -12,7 +12,7 @@ Ce package contient le **domaine métier** de l'application QCM-PLUS dans une ar
 - **Types partagés** : Pattern Result, validations Zod
 
 ### Architecture hexagonale
-
+```bash
 ┌─────────────┐ ┌──────────────┐
 │ CLIENT │──────▶│ BACK │
 │ (React) │ │ (Express) │
@@ -23,6 +23,7 @@ Ce package contient le **domaine métier** de l'application QCM-PLUS dans une ar
 │ LOGIC │
 │ (Métier pur) │
 └─────────────────┘
+```
 
 ## Installation
 
