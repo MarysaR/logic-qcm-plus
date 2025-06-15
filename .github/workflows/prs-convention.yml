@@ -1,0 +1,19 @@
+name: PR Convention
+on:
+  pull_request:
+    branches: 
+      - main 
+      - develop
+
+jobs:
+  pr-convention:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vérification convention PR
+        run: |
+          branch_name="${GITHUB_HEAD_REF}"
+          if [[ ! "$branch_name" =~ ^(feat|fix)/ ]]; then
+            echo "PR depuis $branch_name non autorisee. Utiliser feat/ ou fix/"
+            exit 1
+          fi
+          echo "PR depuis $branch_name autorisee"
