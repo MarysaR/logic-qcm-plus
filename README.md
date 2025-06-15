@@ -14,15 +14,16 @@ Ce package contient le **domaine métier** de l'application QCM-PLUS dans une ar
 ### Architecture hexagonale
 ```bash
 ┌─────────────┐ ┌──────────────┐
-│ CLIENT │──────▶│ BACK │
-│ (React) │ │ (Express) │
-└─────────────┘ └─────┬────────┘
-│
-▼
-┌─────────────────┐
-│ LOGIC │
-│ (Métier pur) │
-└─────────────────┘
+│    CLIENT    ─────▶ BACK
+│    (React)        (Express)          
+└─────────────┘ └─────┬────────┘  
+               │
+               │
+               ▼
+      ┌─────────────────┐
+      │     LOGIC 
+      │   (Métier pur)
+      └─────────────────┘
 ```
 
 ## Installation
