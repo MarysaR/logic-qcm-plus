@@ -32,7 +32,7 @@ Ce package contient le **domaine métier** de l'application QCM-PLUS dans une ar
 ```
 
 ## Structure des dossiers
-
+```bash
 src/
 ├── entities/ # Entités métier
 ├── interfaces/ # Contrats entre couches
@@ -42,6 +42,7 @@ src/
 ├── builders/ # Builders pour tests
 ├── fixtures/ # Données de test
 └── specs/ # Tests unitaires
+```
 
 ## Scripts disponibles
 
