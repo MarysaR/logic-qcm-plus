@@ -124,10 +124,10 @@ Cette commande va :
 1. L'utilisateur lance :
 
    ```bash
-   npm run create:branch -- feat Créer gestion des utilisateurs
+   npm run create:branch -- feat/mre_add_user_back
    ```
 
-2. Le script crée `feat/creer-gestion-des-utilisateurs` depuis `develop`
+2. Le script crée `feat/mre_add_user_back` depuis `develop`
 
 3. Une fois terminé, une PR est ouverte vers `develop`
 
