@@ -5,7 +5,7 @@ import { Ok, Result } from '../types/result';
  * Retourne "pong" sous forme de Result<string, never>
  */
 export class PingUseCase {
-    execute(): Result<string, never> {
-        return Ok.of('pong');
-    }
+  execute(): Result<string, never> {
+    return Ok.of('pong');
+  }
 }
