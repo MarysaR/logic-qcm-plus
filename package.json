@@ -36,13 +36,5 @@
         "ts-jest": "^29.4.0",
         "typescript": "^5.8.3"
     },
-    "description": "",
-    "jest": {
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "testMatch": [
-            "**/*.spec.ts",
-            "**/*.test.ts"
-        ]
-    }
+    "description": ""
 }
