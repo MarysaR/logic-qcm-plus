@@ -1,18 +1,141 @@
-# Contribution au projet Logic
+# Guide de contribution et de développement
 
 ## Structure des branches
 
-Le projet utilise une stratégie de branches stricte pour garantir la stabilité, la traçabilité et la qualité du code.
+Ce document décrit les étapes pour cloner, installer, développer, tester, lint et dockeriser le projet **logic-qcm-plus**.
+Le dépot **logic-qcm-plus** utilise une stratégie de branches stricte pour garantir la stabilité, la traçabilité et la qualité du code.
 
-### Branches principales
+---
 
-* `main` : version stable, livrable et démontrable.
-* `develop` : intégration des fonctionnalités en cours de lot.
+## 1. Pré-requis
+
+* Node.js LTS (>= 20)
+* npm (>= 10)
+* Docker (pour la construction et l’exécution des images)
+* Git
+
+---
+
+## 2. Clonage des dépôts
+
+```bash
+git clone https://github.com/MarysaR/back-qcm-plus.git - back-qcm-plus
+```
+
+---
+
+## 3. Installation et lien local
+
+### 3.1. Dans logic-qcm-plus
+
+```bash
+cd logic-qcm-plus
+npm install
+npm run build
+npm link
+```
+
+> *Cette commande crée un lien symbolique global `logic-qcm-plus` pointant sur votre dossier `logic-qcm-plus`.*
+
+### 3.2. Dans `back-qcm-plus`
+
+```bash
+cd back-qcm-plus
+npm install
+npm link logic-qcm-plus
+```
+
+> *`npm link logic-qcm-plus` crée dans `node_modules` un lien symbolique vers le code de `logic-qcm-plus`.*
+
+---
+
+## 4. Scripts npm
+
+```json
+"scripts": {
+  "create:branch": "bash scripts/create-branch.sh",
+  "test": "jest",
+  "test:watch": "jest --watchAll",
+  "build": "tsc",
+  "prepare": "npm run build",
+  "dev": "tsc --watch",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
+  "format": "prettier --write src/**/*.ts"
+}
+```
+
+* `npm run build` : build TypeScript
+* `npm test` / `npm run test:watch` : exécution des tests Jest
+* `npm run lint` / `npm run lint:fix` : contrôles ESLint
+* `npm run format` : vérification Prettier
+* `npm run create:branch -- <type> <message>` : script de création de branche
+
+---
+
+## 5. Lint en mode watch (optionnel)
+
+Ajouter dans chaque `package.json` :
+
+```json
+"scripts": {
+  "lint:watch": "eslint . --ext .ts --watch"
+}
+```
+
+Puis lancer :
+
+```bash
+npm run lint:watch
+```
+
+> *`Les erreurs ESLint` s’affichent en temps réel.*
+
+---
+
+## 6. Build & Docker
+
+Dockerfile (à la racine de `logic-qcm-plus`) :
+
+```bash
+cd logic-qcm-plus
+docker build -t logic-qcm-plus .
+```
+
+---
+
+## 7. Branches & workflow Git
+
+* **`main`** : code stable, pas de commit direct
+* **`develop`** : intégration continue, tests et lint doivent passer
+* **`feat/<nom>`** : nouvelle fonctionnalité (tests TDD)
+* **`fix/<nom>`** : correctif ciblé
+* **`chore/<nom>`** : tâche technique
+* **`refactor/<nom>`** : refactoring
+
+Respecter les workflows CI (compilation, lint, tests) avant tout merge vers `develop`, puis vers `main`.
+
+**Avant chaque push sur une branche, il faut obligatoirement exécuter :**
+```bash
+npm run lint
+```
+
+*S’il y a des erreurs, exécuter :*
+
+```bash
+npm run lint:fix
+```
+
+Sinon le workflow GitHub Action des lint échouera (voir CI : compilation TypeScript, lint ESLint, format Prettier).
+
+---
 
 ### Branches de travail
 
 * `feat/<nom>` : développement d'une fonctionnalité métier (TDD strict).
 * `fix/<nom>` : correction ciblée d’un bug. Aucun test associé exigé.
+* `chore/<nom>` : tâche technique
+* `refactor/<nom>` : refactoring
 
 ---
 
@@ -26,7 +149,7 @@ Avant la première utilisation du script de création de branche :
 chmod +x tools/create-branch.sh
 ```
 
-Utiliser ensuite la commande suivante pour créer une branche en respectant la convention :
+Ensuite :
 
 ```bash
 npm run create:branch -- feat Ajouter l'authentification stagiaire
@@ -52,7 +175,7 @@ Cette commande va :
 ### `develop`
 
 * Aucune modification directe.
-* Fusion uniquement de branches `feat/*` ou `fix/*`.
+* Fusion uniquement de branches `feat/*`, `fix/*`, `chore/*` ou `refactor/*`.
 * Tous les tests doivent passer avant fusion.
 
 ---
@@ -60,8 +183,8 @@ Cette commande va :
 ## Fonctionnalités (`feat/<nom>`)
 
 * Création depuis `develop` uniquement.
-* Développement selon le cycle TDD (test rouge → implémentation → refactorisation).
-* Tests unitaires obligatoires.
+* Développement selon le cycle TDD (test rouge → implémentation (green) → refactorisation).
+  \*Tests unitaires obligatoires.
 * Nettoyage obligatoire avant fusion (logs, commentaires, fichiers temporaires).
 
 ---
@@ -77,13 +200,15 @@ Cette commande va :
 
 ## Règles de fusion
 
-| Source    | Cible     | Autorisé | Conditions                                                      |
-| --------- | --------- | -------- | --------------------------------------------------------------- |
-| `feat/*`  | `develop` | Oui      | Tests passés, code propre, conforme au besoin                   |
-| `fix/*`   | `develop` | Oui      | Correctif ciblé et vérifié manuellement                         |
-| `develop` | `main`    | Oui      | Fin de lot ou jalon validé. Tout le contenu est testé et stable |
-| `main`    | `develop` | Non      | Interdiction absolue                                            |
-| `develop` | `feat/*`  | Oui      | Rebase autorisé pour synchronisation locale                     |
+| Source       | Cible     | Autorisé | Conditions                                                      |
+| ------------ | --------- | -------- | --------------------------------------------------------------- |
+| `feat/*`     | `develop` | Oui      | Tests passés, code propre, conforme au besoin                   |
+| `fix/*`      | `develop` | Oui      | Correctif ciblé et vérifié manuellement                         |
+| `chore/*`    | `develop` | Oui      | Tâche technique propre et validée                               |
+| `refactor/*` | `develop` | Oui      | Refactoring terminé, code propre, pas de régression             |
+| `develop`    | `main`    | Oui      | Fin de lot ou jalon validé. Tout le contenu est testé et stable |
+| `main`       | `develop` | Non      | Interdiction absolue                                            |
+| `develop`    | `feat/*`  | Oui      | Rebase autorisé pour synchronisation locale                     |
 
 ---
 
@@ -97,22 +222,22 @@ Cette commande va :
 
 ## Contrôles automatiques GitHub (Workflows CI)
 
-### 1. CI standard (`.github/workflows/ci.yml`)
+### 1. CI standard => (`.github/workflows/ci.yml`)
 
 * Exécuté sur `main` et `develop`
 * Vérifie : compilation TypeScript, ESLint, Prettier, tests unitaires Jest
 
-### 2. CI allégée pour `feat/*` et `fix/*` (`ci-feature.yml`)
+### 2. CI allégée pour `feat/*`, `fix/*`, `chore/*`, `refactor/*` => (ci-feature.yml)
 
 * Exécuté uniquement pour les PR vers `develop`
 * Vérifie uniquement les tests (exécution rapide)
 
-### 3. Convention de nommage de branches (`branch-convention.yml`)
+### 3. Convention de nommage de branches => (`branch-convention.yml`)
 
 * Interdit les push directs sur `main` et `develop`
-* Refuse toute branche ne préfixant pas par `feat/` ou `fix/`
+* Refuse toute branche ne préfixant pas par `feat/`, `fix/`, `chore/` ou `refactor/`
 
-### 4. Convention de nommage des PR (`pr-convention.yml`)
+### 4. Convention de nommage des PR => (`pr-convention.yml`)
 
 * Empêche les PR vers `main` ou `develop` depuis une branche non conforme
 * Refuse par exemple `feature/...` ou `ajout-auth`, impose `feat/...` ou `fix/...`
@@ -140,4 +265,4 @@ Cette commande va :
 
 5. Une fois la PR approuvée, elle est mergée dans `develop`
 
-6. `develop` est mergé dans `main` à la fin du lot (version stable)
+6. `develop` est mergé dans `main` à la fin de la fonctionnalité (version stable)

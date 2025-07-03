@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "type": "module",
+    "type": "commonjs",
     "scripts": {
         "create:branch": "bash scripts/create-branch.sh",
         "test": "jest",
