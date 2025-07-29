@@ -21,4 +21,3 @@ steps:
 
   - script: npm run test
     displayName: 'Exécuter les tests unitaires'
-
