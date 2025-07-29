@@ -1,5 +1,3 @@
-# .azure-pipelines.yml
-
 trigger:
   branches:
     include:
