@@ -1,0 +1,25 @@
+# .azure-pipelines.yml
+
+trigger:
+  branches:
+    include:
+      - develop
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Utiliser Node.js'
+
+  - script: npm ci
+    displayName: 'Installer les dépendances'
+
+  - script: npm run build
+    displayName: 'Compiler le projet'
+
+  - script: npm run test
+    displayName: 'Exécuter les tests unitaires'
