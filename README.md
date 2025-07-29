@@ -66,7 +66,6 @@ Gestion d'erreurs sans try/catch :
 import { Result, Ok, Err } from './types/result';
 import { logger } from './config/logger';
 
-// Utilisation
 const result = someOperation();
 if (result.isOk()) {
   logger.info({ data: result.value }, 'Operation successful');
