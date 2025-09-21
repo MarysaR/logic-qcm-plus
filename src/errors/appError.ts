@@ -8,7 +8,7 @@
 export abstract class AppError extends Error {
   code: number;
   constructor(
-    message: string = "Erreur interne du serveur",
+    message: string = 'Erreur interne du serveur',
     code: number = 500
   ) {
     super(message);
