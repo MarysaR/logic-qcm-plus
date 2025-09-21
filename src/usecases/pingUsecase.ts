@@ -1,4 +1,5 @@
-import { Ok, Result } from '../types/result';
+import { Ok, Result } from "../errors/result";
+
 
 /**
  * Use case minimal de test : Ping

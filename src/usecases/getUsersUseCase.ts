@@ -1,4 +1,5 @@
-import { Err, Ok, Result } from '../types/result';
+import { Err, Ok, Result } from "../errors/result";
+
 
 export class GetUsersUseCase {
   public execute(): Result<string[], Error> {
