@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { TokenProvider } from '../../../providers/tokenProvider';
 import { AuthenticateUserUseCase } from '../../../usecases/auth/authenticateUserUseCase';
-import { PermissionDeniedError, ValidationError } from '../../../errors/errors';
+import { ValidationError } from '../../../errors/errors';
 import { Err, Ok } from '../../../errors/result';
 import { User } from '../../../entities/user/user';
 import { RoleEnum } from '../../../enums/roleEnums';
@@ -14,7 +14,6 @@ describe('Feature: TokenProvider', () => {
   let tokenProvider: jest.Mocked<TokenProvider>;
   let passwordHasher: jest.Mocked<PasswordHasher>;
   let authenticateUserUseCase: AuthenticateUserUseCase;
-  let currentUser: User;
 
   beforeEach(() => {
     userRepository = {
@@ -32,57 +31,10 @@ describe('Feature: TokenProvider', () => {
       compare: jest.fn(),
     };
 
-    currentUser = {
-      id: 99,
-      login: 'adminuser',
-      email: 'admin@example.com',
-      password: 'hashed',
-      isActive: true,
-      roleId: 1,
-      role: {
-        id: 1,
-        name: RoleEnum.STAGIAIRE,
-        isActive: true,
-      },
-    };
-
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepository,
       tokenProvider,
-      passwordHasher,
-      currentUser
-    );
-  });
-
-  it('should return PermissionDeniedError if user is not STAGIAIRE or ADMIN', async () => {
-    const forbiddenUser: User = {
-      id: 100,
-      login: 'simpleuser',
-      email: 'simple@example.com',
-      password: 'hashed',
-      isActive: true,
-      roleId: 3,
-      role: {
-        id: 3,
-        name: 'AUTRE' as RoleEnum,
-        isActive: true,
-      },
-    };
-
-    authenticateUserUseCase = new AuthenticateUserUseCase(
-      userRepository,
-      tokenProvider,
-      passwordHasher,
-      forbiddenUser
-    );
-
-    const result = await authenticateUserUseCase.execute({
-      email: 'test@example.com',
-      password: 'secret',
-    });
-
-    expect(result).toEqual(
-      Err.of(new PermissionDeniedError('Accès refusé : rôle requis'))
+      passwordHasher
     );
   });
 
@@ -157,8 +109,7 @@ describe('Feature: TokenProvider', () => {
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepository,
       tokenProvider,
-      passwordHasherStub(),
-      user
+      passwordHasherStub()
     );
 
     const result = await authenticateUserUseCase.execute({
@@ -193,8 +144,7 @@ describe('Feature: TokenProvider', () => {
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepository,
       tokenProvider,
-      passwordHasherStub(),
-      user
+      passwordHasherStub()
     );
 
     const result = await authenticateUserUseCase.execute({
