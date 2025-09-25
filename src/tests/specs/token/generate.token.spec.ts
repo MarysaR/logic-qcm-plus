@@ -3,6 +3,7 @@ import { GenerateTokenUseCase } from '../../../usecases/token/generateTokenUseCa
 import { TokenProvider } from '../../../providers/tokenProvider';
 import { User } from '../../../entities/user/user';
 import { RoleEnum } from '../../../enums/roleEnums';
+import { Ok } from '../../../errors/result';
 
 describe('Feature: GenerateTokenUseCase', () => {
   let tokenProvider: jest.Mocked<TokenProvider>;
@@ -33,7 +34,7 @@ describe('Feature: GenerateTokenUseCase', () => {
   });
 
   it('should return Ok with a JWT when given a valid user', async () => {
-    tokenProvider.generate.mockResolvedValueOnce('jwt-token');
+    tokenProvider.generate.mockResolvedValueOnce(Ok.of('jwt-token'));
 
     const result = await generateTokenUseCase.execute(user);
 

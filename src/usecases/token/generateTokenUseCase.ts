@@ -1,5 +1,5 @@
 import { AppError } from '../../errors/appError';
-import { Result, Ok } from '../../errors/result';
+import { Result } from '../../errors/result';
 import { User } from '../../entities/user/user';
 import { TokenProvider } from '../../providers/tokenProvider';
 import { TokenClaims } from '../../entities/auth/tokenClaims';
@@ -9,6 +9,7 @@ export class GenerateTokenUseCase {
 
   async execute(user: User): Promise<Result<string, AppError>> {
     const now = Date.now();
+
     const claims: TokenClaims = {
       userId: user.id,
       email: user.email,
@@ -17,7 +18,6 @@ export class GenerateTokenUseCase {
       expiresAt: now + 5 * 60 * 1000,
     };
 
-    const token = await this.tokenProvider.generate(claims);
-    return Ok.of(token);
+    return this.tokenProvider.generate(claims);
   }
 }
