@@ -104,7 +104,7 @@ describe('Feature: TokenProvider', () => {
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
-    tokenProvider.generate.mockResolvedValueOnce('jwt-token');
+    tokenProvider.generate.mockResolvedValueOnce(Ok.of('jwt-token'));
 
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepository,
@@ -139,7 +139,7 @@ describe('Feature: TokenProvider', () => {
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
-    tokenProvider.generate.mockResolvedValueOnce('jwt-token');
+    tokenProvider.generate.mockResolvedValueOnce(Ok.of('jwt-token'));
 
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepository,
