@@ -1,5 +1,5 @@
 import { AppError } from '../../errors/appError';
-import { ValidationError } from '../../errors/errors';
+import { PermissionDeniedError, ValidationError } from '../../errors/errors';
 import { Err, Result } from '../../errors/result';
 import { UserRepository } from '../../interfaces/userRepository';
 import { TokenProvider } from '../../providers/tokenProvider';
@@ -34,7 +34,7 @@ export class AuthenticateUserUseCase {
 
     const userResult = await this.userRepository.getUserByEmail(email);
     if (userResult.isErr()) {
-      return Err.of(new ValidationError('Identifiants incorrects'));
+      return Err.of(new PermissionDeniedError('Identifiants incorrects'));
     }
 
     const user = userResult.value;
