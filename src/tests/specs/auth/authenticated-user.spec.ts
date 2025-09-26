@@ -19,6 +19,7 @@ describe('Feature: TokenProvider', () => {
     userRepository = {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
+      createUser: jest.fn()
     };
 
     tokenProvider = {
@@ -73,6 +74,11 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+    company: 'TestCorp',
+    firstName: 'Test',
+    lastName: 'User',
+    createdAt: new Date(),
+    updatedAt: new Date()
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -101,6 +107,11 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      company: 'TestCorp',
+      firstName: 'Test',
+      lastName: 'User',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -136,6 +147,11 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      company: 'TestCorp',
+      firstName: 'Test',
+      lastName: 'User',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));

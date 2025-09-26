@@ -15,6 +15,7 @@ describe('Feature: GetCurrentUser', () => {
     userRepository = {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
+      createUser: jest.fn(),
     };
 
     getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository);
@@ -61,6 +62,11 @@ describe('Feature: GetCurrentUser', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      company: 'TestCorp',
+      firstName: 'Test',
+      lastName: 'User',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getCurrentUser.mockResolvedValueOnce(Ok.of(user));

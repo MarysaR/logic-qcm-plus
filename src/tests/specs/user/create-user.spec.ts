@@ -2,6 +2,7 @@ import { AlreadyExistError, ValidationError } from '../../../errors/errors';
 import { User } from  '../../../entities/user/user';
 import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
+import { Err, Ok } from '../../../errors/result';
 
 
 describe('CreateUserUseCase', () => {
@@ -108,11 +109,7 @@ it('should throw ValidationError if email is empty', async () => {
       updatedAt: new Date(),
     };
   
-    mockRepository.getUserByEmail.mockResolvedValueOnce({
-      isOk: () => true,
-      isErr: () => false,
-      value: user,
-    });
+    mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
   
     await expect(useCase.createUser(user)).rejects.toThrow(AlreadyExistError);
   });
