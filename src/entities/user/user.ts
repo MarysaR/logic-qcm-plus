@@ -8,4 +8,9 @@ export interface User {
   isActive: boolean;
   roleId: number;
   role: Role;
+  company: string;
+  firstName: string;
+  lastName: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
