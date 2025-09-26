@@ -41,6 +41,12 @@ export class CreateUserUseCase {
       throw new AlreadyExistError(`L'email "${user.email}" est déjà utilisé.`);
     }
 
+    user.createdAt = new Date();
+    user.isActive = true;
+    
+    user.role = { id: 2, name: 'STAGIAIRE', isActive: true };
+    user.roleId = 2;
+
     await this.userRepository.createUser(user);
 
     return { success: true };

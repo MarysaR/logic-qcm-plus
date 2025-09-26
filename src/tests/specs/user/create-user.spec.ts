@@ -3,6 +3,7 @@ import { User } from  '../../../entities/user/user';
 import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { Err, Ok } from '../../../errors/result';
+import { RoleEnum } from '../../../enums/roleEnums';
 
 
 describe('CreateUserUseCase', () => {
@@ -13,7 +14,7 @@ describe('CreateUserUseCase', () => {
     mockRepository = {
       getUserByEmail: jest.fn(),
       createUser: jest.fn(),
-      getCurrentUser: jest.fn()
+      getCurrentUser: jest.fn(),
     };
 
     useCase = new CreateUserUseCase(mockRepository);
@@ -30,9 +31,9 @@ describe('CreateUserUseCase', () => {
         company: 'Tales',
         id: 0,
         isActive: false,
-        roleId: 1,
+        roleId: 2,
         role: {
-            id: 1, name: 'Stagiaire',
+            id: 2, name: RoleEnum.STAGIAIRE,
             isActive: true
         },
         createdAt: new Date(),
@@ -52,9 +53,9 @@ it('should throw ValidationError if email is empty', async () => {
       company: 'Tales',
       id: 0,
       isActive: false,
-      roleId: 1,
+      roleId: 2,
       role: {
-          id: 1, name: 'Stagiaire',
+          id: 2, name: RoleEnum.STAGIAIRE,
           isActive: true
       },
       createdAt: new Date(),
@@ -75,11 +76,11 @@ it('should throw ValidationError if email is empty', async () => {
         company: 'Tales',
         id: 0,
         isActive: false,
-        roleId: 1,
+        roleId: 2,
         role: {
-            id: 1, name: 'Stagiaire',
+            id: 2, name: RoleEnum.STAGIAIRE,
             isActive: true
-        } ,
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
     };
@@ -99,11 +100,10 @@ it('should throw ValidationError if email is empty', async () => {
       company: 'Tales',
       id: 0,
       isActive: false,
-      roleId: 1,
+      roleId: 2,
       role: {
-        id: 1,
-        name: 'Stagiaire',
-        isActive: true,
+          id: 2, name: RoleEnum.STAGIAIRE,
+          isActive: true
       },
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -125,11 +125,10 @@ it('should throw WeakPasswordError if password is too weak', async () => {
     company: 'Tales',
     id: 0,
     isActive: false,
-    roleId: 1,
+    roleId: 2,
     role: {
-      id: 1,
-      name: 'Stagiaire',
-      isActive: true,
+        id: 2, name: RoleEnum.STAGIAIRE,
+        isActive: true
     },
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -150,11 +149,10 @@ it('should throw InvalidEmailError if email format is incorrect', async () => {
     company: 'Tales',
     id: 0,
     isActive: false,
-    roleId: 1,
+    roleId: 2,
     role: {
-      id: 1,
-      name: 'Stagiaire',
-      isActive: true,
+        id: 2, name: RoleEnum.STAGIAIRE,
+        isActive: true
     },
     createdAt: new Date(),
     updatedAt: new Date(),
