@@ -1,4 +1,5 @@
-export * from './getUsersUseCase';
+export * from './user/getUsersUseCase';
+export * from './user/createUserUseCase';
 export * from './pingUsecase';
 export * from './auth/authenticateUserUseCase';
 export * from './auth/getCurrentUserUseCase';
