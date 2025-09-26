@@ -1,12 +1,13 @@
 import { TokenClaims } from '../../entities/auth/tokenClaims';
-import { Ok, Err } from '../../errors/result';
+import { Ok, Err, Result } from '../../errors/result';
 import { TokenProvider } from '../../providers/tokenProvider';
 import { NotFoundError } from '../../errors/errors';
+import { AppError } from '../../errors/appError';
 
 export function tokenProviderStub(): TokenProvider {
   return {
-    async generate(): Promise<string> {
-      return 'fake.token.here';
+    async generate(): Promise<Result<string, AppError>> {
+      return Ok.of('fake.token.here');
     },
 
     async verify(token: string) {
