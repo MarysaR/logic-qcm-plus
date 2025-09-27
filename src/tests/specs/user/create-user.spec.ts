@@ -1,4 +1,4 @@
-import { AlreadyExistError, ValidationError } from '../../../errors/errors';
+import { AlreadyExistError, PermissionDeniedError, ValidationError } from '../../../errors/errors';
 import { User } from  '../../../entities/user/user';
 import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
@@ -40,7 +40,9 @@ describe('CreateUserUseCase', () => {
         updatedAt: new Date(),
     };
 
-    await expect(useCase.createUser(user)).rejects.toThrow(ValidationError);
+    const currentUserRole = RoleEnum.ADMIN;
+
+    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
 });
 
 it('should throw ValidationError if email is empty', async () => {
@@ -62,7 +64,9 @@ it('should throw ValidationError if email is empty', async () => {
       updatedAt: new Date(),
   };
 
-  await expect(useCase.createUser(user)).rejects.toThrow(ValidationError);
+  const currentUserRole = RoleEnum.ADMIN;
+
+  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
 });
 
 
@@ -85,7 +89,9 @@ it('should throw ValidationError if email is empty', async () => {
         updatedAt: new Date(),
     };
 
-    await expect(useCase.createUser(user)).rejects.toThrow(ValidationError);
+    const currentUserRole = RoleEnum.ADMIN;
+
+    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
   });
 
 
@@ -108,10 +114,12 @@ it('should throw ValidationError if email is empty', async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    const currentUserRole = RoleEnum.ADMIN;
   
     mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
   
-    await expect(useCase.createUser(user)).rejects.toThrow(AlreadyExistError);
+    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(AlreadyExistError);
   });
 
 
@@ -134,7 +142,9 @@ it('should throw WeakPasswordError if password is too weak', async () => {
     updatedAt: new Date(),
   };
 
-  await expect(useCase.createUser(user)).rejects.toThrow(ValidationError);
+  const currentUserRole = RoleEnum.ADMIN;
+
+  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
 });
 
 
@@ -158,7 +168,39 @@ it('should throw InvalidEmailError if email format is incorrect', async () => {
     updatedAt: new Date(),
   };
 
-  await expect(useCase.createUser(user)).rejects.toThrow(ValidationError);
+  
+  const currentUserRole = RoleEnum.ADMIN;
+
+
+  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
+});
+
+
+
+it('should throw ForbiddenError if current user is not admin', async () => {
+  const userToCreate: User = {
+    login: 'newuser',
+    email: 'newuser@gmail.com',
+    password: 'StrongPass1!',
+    firstName: 'Lola',
+    lastName: 'Vander',
+    company: 'Tales',
+    id: 0,
+    isActive: false,
+    roleId: 2,
+    role: {
+      id: 2,
+      name: RoleEnum.STAGIAIRE,
+      isActive: true,
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const currentUserRole = RoleEnum.STAGIAIRE;
+
+
+  await expect(useCase.createUser(currentUserRole, userToCreate)).rejects.toThrow(PermissionDeniedError);
 });
 
 

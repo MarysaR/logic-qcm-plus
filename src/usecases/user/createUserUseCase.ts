@@ -1,11 +1,18 @@
 import { UserRepository } from '../../interfaces/userRepository';
 import { User } from '../../entities/user/user';
-import { ValidationError, AlreadyExistError } from '../../errors/errors';
+import { ValidationError, AlreadyExistError, PermissionDeniedError } from '../../errors/errors';
+import { RoleEnum } from '../../enums';
 
 export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async createUser(user: User): Promise<{ success: boolean }> {
+  async createUser(currentUserRole: RoleEnum, user: User): Promise<{ success: boolean }> {
+
+  if (currentUserRole !== RoleEnum.ADMIN) {
+    throw new PermissionDeniedError('Vous n’avez pas les droits pour créer un utilisateur.');
+  }
+
+
     const requiredFields = [
       user.login,
       user.email,
