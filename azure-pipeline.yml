@@ -10,14 +10,29 @@ pool:
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '20.x'
-    displayName: 'Utiliser Node.js'
+      versionSpec: '20.19.1' # ANNOTATION: Vite est compatible à partir de 20.19.1
+    displayName: 'Utiliser Node.js 20.19.1'
 
   - script: npm ci
     displayName: 'Installer les dépendances'
 
+  - script: npm run lint
+    displayName: 'Vérifier lint'
+
   - script: npm run build
-    displayName: 'Compiler le projet'
+    displayName: 'Compiler le projet (dist/)'
 
   - script: npm run test
     displayName: 'Exécuter les tests unitaires'
+
+  - script: |
+      npm pack
+      mkdir -p $(Build.ArtifactStagingDirectory)
+      mv *.tgz $(Build.ArtifactStagingDirectory)/
+    displayName: 'Packager le projet en .tgz'
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifact: 'logicPackage'
+    displayName: 'Publier artefact logic-qcm-plus'
