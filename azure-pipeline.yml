@@ -25,11 +25,14 @@ steps:
   - script: npm run test
     displayName: 'Exécuter les tests unitaires'
 
-  - script: npm pack
+  - script: |
+      npm pack
+      mkdir -p $(Build.ArtifactStagingDirectory)
+      mv *.tgz $(Build.ArtifactStagingDirectory)/
     displayName: 'Packager le projet en .tgz'
 
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(System.DefaultWorkingDirectory)'
+      targetPath: '$(Build.ArtifactStagingDirectory)'
       artifact: 'logicPackage'
     displayName: 'Publier artefact logic-qcm-plus'
