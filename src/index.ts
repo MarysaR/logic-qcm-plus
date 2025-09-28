@@ -5,4 +5,3 @@ export * from './interfaces';
 export * from './providers';
 export * from './enums';
 export * from './utils';
-export * from './constants';
