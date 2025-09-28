@@ -34,7 +34,7 @@ describe('Feature: GenerateTokenUseCase', () => {
       firstName: 'Test',
       lastName: 'User',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   });
 
