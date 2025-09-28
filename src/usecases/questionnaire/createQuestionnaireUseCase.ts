@@ -40,7 +40,6 @@ export class CreateQuestionnaireUseCase {
       );
     }
 
-    // Création
     const questionnaire: Questionnaire = {
       id: 0,
       name: command.name,
