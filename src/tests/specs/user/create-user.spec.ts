@@ -2,13 +2,15 @@ import { AlreadyExistError, PermissionDeniedError, ValidationError } from '../..
 import { User } from  '../../../entities/user/user';
 import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
-import { Err, Ok } from '../../../errors/result';
+import { Ok } from '../../../errors/result';
 import { RoleEnum } from '../../../enums/roleEnums';
 
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
   let mockRepository: jest.Mocked<UserRepository>;
+  let user: User;
+  let currentUserRole: number;
 
   beforeEach(() => {
     mockRepository = {
@@ -17,38 +19,9 @@ describe('CreateUserUseCase', () => {
       getCurrentUser: jest.fn(),
     };
 
-    useCase = new CreateUserUseCase(mockRepository);
-  });
-
-
-  it('should throw ValidationError if a required field is empty', async () => {
-    const user: User = {
-        login: '',
-        email: 'newuser@gmail.com',
-        password: 'randomPassword1!',
-        firstName: 'Lola',
-        lastName: 'Vander',
-        company: 'Tales',
-        id: 0,
-        isActive: false,
-        roleId: 2,
-        role: {
-            id: 2, name: RoleEnum.STAGIAIRE,
-            isActive: true
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    };
-
-    const currentUserRole = RoleEnum.ADMIN;
-
-    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
-});
-
-it('should throw ValidationError if email is empty', async () => {
-  const user: User = {
-      login: 'newuser',
-      email: '',
+    user = {
+      login: 'login',
+      email: 'newuser@gmail.com',
       password: 'randomPassword1!',
       firstName: 'Lola',
       lastName: 'Vander',
@@ -64,144 +37,166 @@ it('should throw ValidationError if email is empty', async () => {
       updatedAt: new Date(),
   };
 
-  const currentUserRole = RoleEnum.ADMIN;
+   currentUserRole = 1;
 
-  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
+    useCase = new CreateUserUseCase(mockRepository);
+  });
+
+
+  it('should return ValidationError if a required field is empty', async () => {
+
+    user.login = '';
+
+
+    const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+  }
 });
 
+it('should return ValidationError if email is empty', async () => {
+   user.email = '';
 
-  it('should throw ValidationError if password is empty', async () => {
-    const user: User = {
-        login: 'newuser',
-        email: 'newuser@gmail.com',
-        password: '',
-        firstName: 'Lola',
-        lastName: 'Vander',
-        company: 'Tales',
-        id: 0,
-        isActive: false,
-        roleId: 2,
-        role: {
-            id: 2, name: RoleEnum.STAGIAIRE,
-            isActive: true
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    };
 
-    const currentUserRole = RoleEnum.ADMIN;
 
-    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
+   const result = await useCase.createUser(currentUserRole, user);
+
+   expect(result.isErr()).toBe(true);
+ 
+   if (result.isErr()) {
+     expect(result.error).toBeInstanceOf(ValidationError);
+     expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+   }
+});
+
+  it('should return ValidationError if password is empty', async () => {
+
+    user.password = '';
+
+
+    const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+  }
+  });
+
+  it('should return ValidationError if lastName is empty', async () => {
+
+    user.lastName = '';
+
+    const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+  }
+  });
+
+  it('should return ValidationError if firstName is empty', async () => {
+
+    user.firstName = '';
+
+
+    const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+  }
+  });
+
+  it('should return ValidationError if company is empty', async () => {
+
+    user.company = '';
+
+
+    const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('All fields are required: login, email, password, firstName, lastName, company');
+  }
   });
 
 
 
-  it('should throw AlreadyExistError if email already exists', async () => {
-    const user: User = {
-      login: 'newuser',
-      email: 'existinguser@gmail.com',
-      password: 'StrongPass1!',
-      firstName: 'Lola',
-      lastName: 'Vander',
-      company: 'Tales',
-      id: 0,
-      isActive: false,
-      roleId: 2,
-      role: {
-          id: 2, name: RoleEnum.STAGIAIRE,
-          isActive: true
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  it('should return AlreadyExistError if email already exists', async () => {
 
-    const currentUserRole = RoleEnum.ADMIN;
   
     mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
+
+    const result = await useCase.createUser(currentUserRole, user);
   
-    await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(AlreadyExistError);
+    expect(result.isErr()).toBe(true);
+
+    if (result.isErr()) {
+      expect(result.error).toBeInstanceOf(AlreadyExistError);
+      expect(result.error.message).toBe(`L'email "${user.email}" est déjà utilisé.`);
+    }
   });
 
 
-it('should throw WeakPasswordError if password is too weak', async () => {
-  const user: User = {
-    login: 'newuser',
-    email: 'newuser@gmail.com',
-    password: '123',
-    firstName: 'Lola',
-    lastName: 'Vander',
-    company: 'Tales',
-    id: 0,
-    isActive: false,
-    roleId: 2,
-    role: {
-        id: 2, name: RoleEnum.STAGIAIRE,
-        isActive: true
-    },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+it('should return ValidationError if password is too weak', async () => {
 
-  const currentUserRole = RoleEnum.ADMIN;
+  user.password = 'weakpass';
 
-  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
+
+
+  const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
+  }
+});
+
+
+it('should return ValidationError if email format is incorrect', async () => {
+  user.email = 'invalidemailformat';
+
+  const result = await useCase.createUser(currentUserRole, user);
+
+  expect(result.isErr()).toBe(true);
+
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.message).toBe('Invalid email format.');
+  }
 });
 
 
 
-it('should throw InvalidEmailError if email format is incorrect', async () => {
-  const user: User = {
-    login: 'newuser',
-    email: 'invalid-email',
-    password: 'StrongPass1!',
-    firstName: 'Lola',
-    lastName: 'Vander',
-    company: 'Tales',
-    id: 0,
-    isActive: false,
-    roleId: 2,
-    role: {
-        id: 2, name: RoleEnum.STAGIAIRE,
-        isActive: true
-    },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  
-  const currentUserRole = RoleEnum.ADMIN;
-
-
-  await expect(useCase.createUser(currentUserRole, user)).rejects.toThrow(ValidationError);
-});
 
 
 
-it('should throw ForbiddenError if current user is not admin', async () => {
-  const userToCreate: User = {
-    login: 'newuser',
-    email: 'newuser@gmail.com',
-    password: 'StrongPass1!',
-    firstName: 'Lola',
-    lastName: 'Vander',
-    company: 'Tales',
-    id: 0,
-    isActive: false,
-    roleId: 2,
-    role: {
-      id: 2,
-      name: RoleEnum.STAGIAIRE,
-      isActive: true,
-    },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+it('should return PermissionDeniedError if current user is not admin', async () => {
+  const currentUserRole = 2;
 
-  const currentUserRole = RoleEnum.STAGIAIRE;
+  const result = await useCase.createUser(currentUserRole, user);
 
+    expect(result.isErr()).toBe(true);
 
-  await expect(useCase.createUser(currentUserRole, userToCreate)).rejects.toThrow(PermissionDeniedError);
-});
+  if (result.isErr()) {
+    expect(result.error).toBeInstanceOf(PermissionDeniedError);
+    expect(result.error.message).toBe('Vous n’avez pas les droits pour créer un utilisateur.');
+  }
+})
 
 
   

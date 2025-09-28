@@ -36,7 +36,7 @@ export class BadRequestError extends AppError {
   }
 }
 
-export class ValidationError extends BadRequestError {
+export class ValidationError extends BadRequestError  {
   constructor(message: string = 'Erreur de validation') {
     super(message);
   }
