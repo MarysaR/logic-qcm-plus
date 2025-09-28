@@ -2,10 +2,14 @@ import { UserRepository } from '../../interfaces/userRepository';
 import { User } from '../../entities/user/user';
 import { ValidationError, AlreadyExistError, PermissionDeniedError } from '../../errors/errors';
 import { AppError, Err, Result, Ok } from '../../errors';
+import { PasswordHasher } from '../../providers';
+import { AuthenticateUserUseCase } from '../auth/authenticateUserUseCase';
 
 
 export class CreateUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private userRepository: UserRepository,
+    private readonly passwordHasher: PasswordHasher
+  ) {}
 
   async createUser(currentUserRoleId: number, user: User):Promise<Result<{ isOk: () => boolean }, AppError>> {
 
@@ -23,7 +27,7 @@ export class CreateUserUseCase {
       user.company,
     ];
 
-    if (requiredFields.some((field) => !field || field.trim() == '')) {
+    if (requiredFields.some((field) => !field || String(field).trim() == '')) {
       return Err.of(new ValidationError(
         'All fields are required: login, email, password, firstName, lastName, company'
       ));
@@ -51,6 +55,10 @@ export class CreateUserUseCase {
 
     user.createdAt = new Date();
     user.isActive = true;
+
+    user.password = await this.passwordHasher.hash(user.password);
+
+    user.roleId = 2;
 
     await this.userRepository.createUser(user);
 

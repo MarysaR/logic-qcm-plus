@@ -4,11 +4,13 @@ import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { Ok } from '../../../errors/result';
 import { RoleEnum } from '../../../enums/roleEnums';
+import { PasswordHasher } from '../../../providers/passwordHash';
 
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
   let mockRepository: jest.Mocked<UserRepository>;
+  let passwordHasher: jest.Mocked<PasswordHasher>;
   let user: User;
   let currentUserRole: number;
 
@@ -18,6 +20,12 @@ describe('CreateUserUseCase', () => {
       createUser: jest.fn(),
       getCurrentUser: jest.fn(),
     };
+
+    passwordHasher = {
+      hash: jest.fn().mockResolvedValue('hashedPassword'),
+      compare: jest.fn().mockResolvedValue(true),
+    };
+
 
     user = {
       login: 'login',
@@ -39,7 +47,7 @@ describe('CreateUserUseCase', () => {
 
    currentUserRole = 1;
 
-    useCase = new CreateUserUseCase(mockRepository);
+    useCase = new CreateUserUseCase(mockRepository, passwordHasher);
   });
 
 
