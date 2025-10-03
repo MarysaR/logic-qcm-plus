@@ -40,6 +40,21 @@ export class CreateQuestionUseCase {
       );
     }
 
+    for (const answer of command.answers) {
+      if (!answer.text || answer.text.trim().length == 0) {
+        return Err.of(
+          new ValidationError("Le texte d'une réponse ne peut pas être vide")
+        );
+      }
+      if (answer.text.length > 255) {
+        return Err.of(
+          new ValidationError(
+            "Le texte d'une réponse ne doit pas dépasser 255 caractères"
+          )
+        );
+      }
+    }
+
     const result = await this.questionRepository.createQuestion(command);
     if (result.isErr()) {
       return Err.of(
