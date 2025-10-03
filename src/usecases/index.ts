@@ -1,5 +1,4 @@
 export * from './getUsersUseCase';
-export * from './pingUsecase';
 export * from './token/generateTokenUseCase';
 export * from './token/verifyTokenUseCase';
 export * from './auth/authenticateUserUseCase';
