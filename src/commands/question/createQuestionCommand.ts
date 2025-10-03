@@ -1,7 +1,7 @@
-import { Answer } from '../../entities/answer/answer';
+import { CreateAnswerCommand } from './createAnswerCommand';
 
 export interface CreateQuestionCommand {
   label: string;
   questionnaireId: number;
-  answers: Answer[];
+  answers: CreateAnswerCommand[];
 }
