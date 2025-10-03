@@ -25,8 +25,12 @@ export const userBuilder = ({
   password = 'hashed-secret',
   company,
   isActive = true,
-  roleId = 2,
-  role: roleValue = { id: 2, name: RoleEnum.STAGIAIRE, isActive: true },
+  roleId = RoleEnum.STAGIAIRE,
+  role: roleValue = {
+    id: RoleEnum.STAGIAIRE,
+    name: 'STAGIAIRE',
+    isActive: true,
+  },
   createdAt = new Date(),
   updatedAt = new Date(),
 }: Partial<User> = {}): UserBuilder => {
@@ -56,10 +60,10 @@ export const userBuilder = ({
     withRole: (roleEnum: RoleEnum) =>
       userBuilder({
         ...props,
-        roleId: roleEnum === RoleEnum.ADMIN ? 1 : 2,
+        roleId: roleEnum,
         role: {
-          id: roleEnum === RoleEnum.ADMIN ? 1 : 2,
-          name: roleEnum,
+          id: roleEnum,
+          name: roleEnum == RoleEnum.ADMIN ? 'ADMIN' : 'STAGIAIRE',
           isActive: true,
         },
       }),

@@ -2,7 +2,6 @@ import { jest } from '@jest/globals';
 import { GenerateTokenUseCase } from '../../../usecases/token/generateTokenUseCase';
 import { TokenProvider } from '../../../providers/tokenProvider';
 import { User } from '../../../entities/user/user';
-import { RoleEnum } from '../../../enums/roleEnums';
 import { Ok } from '../../../errors/result';
 
 describe('Feature: GenerateTokenUseCase', () => {
@@ -29,7 +28,7 @@ describe('Feature: GenerateTokenUseCase', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
       createdAt: new Date(),

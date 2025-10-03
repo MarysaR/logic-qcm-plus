@@ -5,7 +5,6 @@ import { AuthenticateUserUseCase } from '../../../usecases/auth/authenticateUser
 import { ValidationError } from '../../../errors/errors';
 import { Err, Ok } from '../../../errors/result';
 import { User } from '../../../entities/user/user';
-import { RoleEnum } from '../../../enums/roleEnums';
 import { PasswordHasher } from '../../../providers/passwordHash';
 import { passwordHasherStub } from '../../stubs/passwordHashStubs';
 
@@ -72,7 +71,7 @@ describe('Feature: TokenProvider', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
       createdAt: new Date(),
@@ -104,7 +103,7 @@ describe('Feature: TokenProvider', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
       createdAt: new Date(),
@@ -143,7 +142,7 @@ describe('Feature: TokenProvider', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
       createdAt: new Date(),
