@@ -7,7 +7,7 @@ import {
   TechnicalError,
   ValidationError,
 } from '../../../errors/errors';
-import { Err } from '../../../errors/result';
+import { Err, Ok } from '../../../errors/result';
 import { userBuilder } from '../../builders/user-builder';
 import { RoleEnum } from '../../../enums/roleEnums';
 
@@ -20,8 +20,6 @@ describe('Feature: CreateQuestionUseCase', () => {
       getQuestions: jest.fn(),
       getQuestionById: jest.fn(),
       createQuestion: jest.fn(),
-      updateQuestion: jest.fn(),
-      deleteQuestion: jest.fn(),
     };
 
     useCase = new CreateQuestionUseCase(questionRepository);
@@ -119,6 +117,28 @@ describe('Feature: CreateQuestionUseCase', () => {
     expect(questionRepository.createQuestion).not.toHaveBeenCalled();
   });
 
+  it('should return ValidationError if an answer text is empty', async () => {
+    const adminUser = userBuilder().withRole(RoleEnum.ADMIN).build();
+
+    const command: CreateQuestionCommand = {
+      label: 'Quelle est la capitale de la France ?',
+      questionnaireId: 1,
+      answers: [
+        { text: '', isCorrect: true },
+        { text: 'Lyon', isCorrect: false },
+      ],
+    };
+
+    const result = await useCase.execute(adminUser, command);
+
+    expect(result).toEqual(
+      Err.of(
+        new ValidationError("Le texte d'une réponse ne peut pas être vide")
+      )
+    );
+    expect(questionRepository.createQuestion).not.toHaveBeenCalled();
+  });
+
   it('should return TechnicalError if repository fails to create the question', async () => {
     const adminUser = userBuilder().withRole(RoleEnum.ADMIN).build();
 
@@ -144,5 +164,25 @@ describe('Feature: CreateQuestionUseCase', () => {
         )
       )
     );
+  });
+
+  it('should create a question successfully', async () => {
+    const adminUser = userBuilder().withRole(RoleEnum.ADMIN).build();
+
+    const command: CreateQuestionCommand = {
+      label: 'Quelle est la capitale de la France ?',
+      questionnaireId: 1,
+      answers: [
+        { text: 'Paris', isCorrect: true },
+        { text: 'Lyon', isCorrect: false },
+      ],
+    };
+
+    questionRepository.createQuestion.mockResolvedValueOnce(Ok.of(undefined));
+
+    const result = await useCase.execute(adminUser, command);
+
+    expect(result).toEqual(Ok.of(undefined));
+    expect(questionRepository.createQuestion).toHaveBeenCalledWith(command);
   });
 });
