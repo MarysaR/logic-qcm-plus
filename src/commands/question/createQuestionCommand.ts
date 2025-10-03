@@ -1,4 +1,4 @@
-import { Answer } from '../entities/answer/answer';
+import { Answer } from '../../entities/answer/answer';
 
 export interface CreateQuestionCommand {
   label: string;
