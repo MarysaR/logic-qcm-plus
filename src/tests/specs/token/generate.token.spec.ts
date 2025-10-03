@@ -20,6 +20,8 @@ describe('Feature: GenerateTokenUseCase', () => {
 
     user = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -30,6 +32,8 @@ describe('Feature: GenerateTokenUseCase', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   });
 

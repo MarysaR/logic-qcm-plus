@@ -51,6 +51,8 @@ describe('Feature: GetCurrentUser', () => {
 
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -61,6 +63,8 @@ describe('Feature: GetCurrentUser', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getCurrentUser.mockResolvedValueOnce(Ok.of(user));

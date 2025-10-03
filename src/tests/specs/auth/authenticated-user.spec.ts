@@ -63,9 +63,11 @@ describe('Feature: TokenProvider', () => {
   it('should return ValidationError if login and password are incorrect', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
-      password: 'hashed-password',
+      password: 'hashed-secret',
       isActive: true,
       roleId: 2,
       role: {
@@ -73,6 +75,8 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -91,6 +95,8 @@ describe('Feature: TokenProvider', () => {
   it('should return Ok with a JWT if login and password are correct', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -101,6 +107,8 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -126,6 +134,8 @@ describe('Feature: TokenProvider', () => {
   it('should call tokenProvider.generate when authentication succeeds', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -136,6 +146,8 @@ describe('Feature: TokenProvider', () => {
         name: RoleEnum.STAGIAIRE,
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
