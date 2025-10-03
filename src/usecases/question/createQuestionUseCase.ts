@@ -17,7 +17,7 @@ export class CreateQuestionUseCase {
     currentUser: User,
     command: CreateQuestionCommand
   ): Promise<Result<void, AppError>> {
-    if (currentUser.role.name != RoleEnum.ADMIN) {
+    if (currentUser.roleId != RoleEnum.ADMIN) {
       return Err.of(
         new PermissionDeniedError(
           'Seul un administrateur peut créer une question'
