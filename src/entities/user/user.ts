@@ -13,9 +13,4 @@ export interface User {
   updatedAt: Date;
   roleId: number;
   role: Role;
-  company: string;
-  firstName: string;
-  lastName: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
