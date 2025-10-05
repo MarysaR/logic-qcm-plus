@@ -43,7 +43,8 @@ src/
 └── tests/
 ├── builders/ # Builders pour tests
 ├── fixtures/ # Données de test
-└── specs/ # Tests unitaires
+└── specs/ # Tests unitairesgit status
+
 ```
 
 ## Scripts disponibles
