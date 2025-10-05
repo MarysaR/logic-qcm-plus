@@ -7,7 +7,6 @@ import { User } from '../../../entities/user/user';
 import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { Ok } from '../../../errors/result';
-import { RoleEnum } from '../../../enums/roleEnums';
 import { PasswordHasher } from '../../../providers/passwordHash';
 
 describe('CreateUserUseCase', () => {
@@ -41,7 +40,7 @@ describe('CreateUserUseCase', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
       createdAt: new Date(),
