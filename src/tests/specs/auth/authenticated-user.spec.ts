@@ -5,7 +5,6 @@ import { AuthenticateUserUseCase } from '../../../usecases/auth/authenticateUser
 import { ValidationError } from '../../../errors/errors';
 import { Err, Ok } from '../../../errors/result';
 import { User } from '../../../entities/user/user';
-import { RoleEnum } from '../../../enums/roleEnums';
 import { PasswordHasher } from '../../../providers/passwordHash';
 import { passwordHasherStub } from '../../stubs/passwordHashStubs';
 
@@ -63,16 +62,20 @@ describe('Feature: TokenProvider', () => {
   it('should return ValidationError if login and password are incorrect', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
-      password: 'hashed-password',
+      password: 'hashed-secret',
       isActive: true,
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -91,6 +94,8 @@ describe('Feature: TokenProvider', () => {
   it('should return Ok with a JWT if login and password are correct', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -98,9 +103,11 @@ describe('Feature: TokenProvider', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
@@ -126,6 +133,8 @@ describe('Feature: TokenProvider', () => {
   it('should call tokenProvider.generate when authentication succeeds', async () => {
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -133,9 +142,11 @@ describe('Feature: TokenProvider', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));

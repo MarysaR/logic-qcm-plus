@@ -2,9 +2,8 @@ import { User } from '../entities/user/user';
 import { RoleEnum } from '../enums/roleEnums';
 
 export function hasRoles(user: User, required: RoleEnum): boolean {
-  if (user.role.name == RoleEnum.ADMIN) {
-    return true;
-  }
+  if (!user.roleId) return false;
+  if (user.roleId == RoleEnum.ADMIN) return true;
 
-  return user.role.name == required;
+  return user.roleId == required;
 }

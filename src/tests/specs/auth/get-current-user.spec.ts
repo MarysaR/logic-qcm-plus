@@ -5,7 +5,6 @@ import { NotFoundError } from '../../../errors/errors';
 import { Err, Ok } from '../../../errors/result';
 import { TokenClaims } from '../../../entities/auth/tokenClaims';
 import { User } from '../../../entities/user/user';
-import { RoleEnum } from '../../../enums/roleEnums';
 
 describe('Feature: GetCurrentUser', () => {
   let userRepository: jest.Mocked<UserRepository>;
@@ -51,6 +50,8 @@ describe('Feature: GetCurrentUser', () => {
 
     const user: User = {
       id: 1,
+      firstName: 'Test',
+      lastName: 'User',
       login: 'testuser',
       email: 'test@example.com',
       password: 'hashed-secret',
@@ -58,9 +59,11 @@ describe('Feature: GetCurrentUser', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: 'STAGIAIRE',
         isActive: true,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     userRepository.getCurrentUser.mockResolvedValueOnce(Ok.of(user));
