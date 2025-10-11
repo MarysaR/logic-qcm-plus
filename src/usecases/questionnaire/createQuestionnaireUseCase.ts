@@ -8,20 +8,18 @@ import {
 } from '../../errors/errors';
 import { QuestionnaireRepository } from '../../interfaces/questionnaireRepository';
 import { Questionnaire } from '../../entities/questionnaire/questionnaire';
-
-export interface CreateQuestionnaireCommand {
-  name: string;
-  description?: string;
-}
+import { CreateQuestionnaireCommand } from '../../commands/questionnaire/createQuestionnaireCommand';
 
 export class CreateQuestionnaireUseCase {
   constructor(private readonly questionnaireRepo: QuestionnaireRepository) {}
 
   public async execute(
     command: CreateQuestionnaireCommand
+    // void changed to Questionnaire{
   ): Promise<Result<Questionnaire, AppError>> {
-    const name = command.name?.trim();
+    // TODO: ajouter le test + la gestion des roles en TDD
 
+    const name = command.name?.trim();
     if (!name) {
       return Err.of(
         new ValidationError('Le nom du questionnaire est obligatoire')
@@ -51,9 +49,9 @@ export class CreateQuestionnaireUseCase {
     const created =
       await this.questionnaireRepo.createQuestionnaire(questionnaire);
     if (created.isErr()) {
-      return Err.of(created.error);
+      return Err.of(created.error); // TODO: Test + Propager l'erreur technique en la typant explicitement
     }
 
-    return Ok.of<Questionnaire, AppError>(questionnaire);
+    return Ok.of(questionnaire); // TODO: return Ok.of(undefined) et pas le questionnaire
   }
 }

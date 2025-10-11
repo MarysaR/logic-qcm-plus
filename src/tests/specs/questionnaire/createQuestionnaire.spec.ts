@@ -30,7 +30,7 @@ describe('CreateQuestionnaireUseCase', () => {
       updatedAt: new Date(),
     };
   });
-
+  // TODO: ajouter les tests de gestion des rôles en TDD
   it('should return ValidationError when name empty', async () => {
     const result = await useCase.execute({ name: '   ' });
     expect(result.isErr()).toBe(true);
