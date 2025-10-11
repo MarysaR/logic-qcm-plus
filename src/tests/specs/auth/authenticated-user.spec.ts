@@ -18,7 +18,6 @@ describe('Feature: TokenProvider', () => {
     userRepository = {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
-      createUser: jest.fn(),
     };
 
     tokenProvider = {
@@ -169,6 +168,7 @@ describe('Feature: TokenProvider', () => {
       expect.objectContaining({
         userId: user.id,
         email: user.email,
+        roleId: user.roleId,
       })
     );
 
