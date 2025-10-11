@@ -7,7 +7,6 @@ import {
 } from '../../errors/errors';
 import { AppError, Err, Result, Ok } from '../../errors';
 import { PasswordHasher } from '../../providers';
-import { RoleEnum } from '../../enums/roleEnums';
 
 export class CreateUserUseCase {
   constructor(
@@ -19,7 +18,6 @@ export class CreateUserUseCase {
     currentUserRoleId: number,
     user: User
   ): Promise<Result<void, AppError>> {
-
     //TODO: remplacer le 1 par RoleEnum.ADMIN une fois bug corrigé
     if (currentUserRoleId != 1) {
       return Err.of(
@@ -79,5 +77,6 @@ export class CreateUserUseCase {
 
     await this.userRepository.createUser(user);
 
-    return Ok.of(undefined);  }
+    return Ok.of(undefined);
+  }
 }
