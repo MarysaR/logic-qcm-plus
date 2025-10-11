@@ -5,19 +5,28 @@ import {
   AlreadyExistError,
   NotFoundError,
   TechnicalError,
+  PermissionDeniedError,
 } from '../../errors/errors';
 import { QuestionnaireRepository } from '../../interfaces/questionnaireRepository';
 import { Questionnaire } from '../../entities/questionnaire/questionnaire';
 import { CreateQuestionnaireCommand } from '../../commands/questionnaire/createQuestionnaireCommand';
+import { User } from '../../entities/user/user';
+import { RoleEnum } from '../../enums/roleEnums';
 
 export class CreateQuestionnaireUseCase {
   constructor(private readonly questionnaireRepo: QuestionnaireRepository) {}
 
   public async execute(
+    currentUser: User,
     command: CreateQuestionnaireCommand
-    // void changed to Questionnaire{
-  ): Promise<Result<Questionnaire, AppError>> {
-    // TODO: ajouter le test + la gestion des roles en TDD
+  ): Promise<Result<void, AppError>> {
+    if (currentUser.roleId !== RoleEnum.ADMIN) {
+      return Err.of(
+        new PermissionDeniedError(
+          'Seul un administrateur peut créer un questionnaire'
+        )
+      );
+    }
 
     const name = command.name?.trim();
     if (!name) {
@@ -49,9 +58,13 @@ export class CreateQuestionnaireUseCase {
     const created =
       await this.questionnaireRepo.createQuestionnaire(questionnaire);
     if (created.isErr()) {
-      return Err.of(created.error); // TODO: Test + Propager l'erreur technique en la typant explicitement
+      return Err.of(
+        new TechnicalError(
+          'Erreur technique lors de la création du questionnaire'
+        )
+      );
     }
 
-    return Ok.of(questionnaire); // TODO: return Ok.of(undefined) et pas le questionnaire
+    return Ok.of(undefined);
   }
 }
