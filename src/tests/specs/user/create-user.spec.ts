@@ -73,7 +73,7 @@ describe('CreateUserUseCase', () => {
   it('should return PermissionDeniedError if current user is not admin', async () => {
     currentUser.roleId = RoleEnum.STAGIAIRE;
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -88,7 +88,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if a required field is empty', async () => {
     user.login = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -103,7 +103,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email is empty', async () => {
     user.email = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -118,7 +118,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is empty', async () => {
     user.password = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -133,7 +133,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if lastName is empty', async () => {
     user.lastName = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -148,7 +148,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if firstName is empty', async () => {
     user.firstName = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -163,7 +163,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if company is empty', async () => {
     user.company = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -178,7 +178,7 @@ describe('CreateUserUseCase', () => {
   it('should return AlreadyExistError if email already exists', async () => {
     mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -193,7 +193,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is too weak', async () => {
     user.password = 'weakpass';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -208,7 +208,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email format is incorrect', async () => {
     user.email = 'invalidemailformat';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
