@@ -1,4 +1,3 @@
-export * from './user/getUsersUseCase';
 export * from './user/createUserUseCase';
 export * from './token/generateTokenUseCase';
 export * from './token/verifyTokenUseCase';
