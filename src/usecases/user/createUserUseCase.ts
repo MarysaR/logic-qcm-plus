@@ -7,6 +7,7 @@ import {
 } from '../../errors/errors';
 import { AppError, Err, Result, Ok } from '../../errors';
 import { PasswordHasher } from '../../providers';
+import { RoleEnum } from '../../enums/roleEnums';
 
 export class CreateUserUseCase {
   constructor(
@@ -15,10 +16,10 @@ export class CreateUserUseCase {
   ) {}
 
   async createUser(
-    currentUserRoleId: number,
+    currentUser: User,
     user: User
-  ): Promise<Result<{ isOk: () => boolean }, AppError>> {
-    if (currentUserRoleId != 1) {
+  ): Promise<Result<void, AppError>> {
+    if (currentUser.roleId != RoleEnum.ADMIN) {
       return Err.of(
         new PermissionDeniedError(
           'Vous n’avez pas les droits pour créer un utilisateur.'
@@ -76,6 +77,5 @@ export class CreateUserUseCase {
 
     await this.userRepository.createUser(user);
 
-    return Ok.of<{ isOk: () => boolean }, AppError>({ isOk: () => true });
-  }
+    return Ok.of(undefined);  }
 }

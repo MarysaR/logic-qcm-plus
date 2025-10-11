@@ -15,6 +15,7 @@ describe('CreateUserUseCase', () => {
   let mockRepository: jest.Mocked<UserRepository>;
   let passwordHasher: jest.Mocked<PasswordHasher>;
   let user: User;
+  let currentUser: User;
   let currentUserRole: number;
 
   beforeEach(() => {
@@ -41,22 +42,55 @@ describe('CreateUserUseCase', () => {
       roleId: 2,
       role: {
         id: 2,
-        name: RoleEnum.STAGIAIRE,
+        name: RoleEnum.STAGIAIRE.toString(),
         isActive: true,
       },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    currentUserRole = 1;
+    currentUser = {
+      login: 'ADMIN',
+      email: 'admin@gmail.com',
+      password: 'randomPassword1!',
+      firstName: 'admin',
+      lastName: 'admin',
+      company: 'Tales',
+      id: 1,
+      isActive: false,
+      roleId: 1,
+      role: {
+        id: 1,
+        name: RoleEnum.ADMIN.toString(),
+        isActive: true,
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
     useCase = new CreateUserUseCase(mockRepository, passwordHasher);
+  });
+
+  it('should return PermissionDeniedError if current user is not admin', async () => {
+    currentUser.roleId = RoleEnum.STAGIAIRE;
+    currentUserRole = currentUser.roleId;
+
+    const result = await useCase.createUser(currentUser, user);
+
+    expect(result.isErr()).toBe(true);
+
+    if (result.isErr()) {
+      expect(result.error).toBeInstanceOf(PermissionDeniedError);
+      expect(result.error.message).toBe(
+        'Vous n’avez pas les droits pour créer un utilisateur.'
+      );
+    }
   });
 
   it('should return ValidationError if a required field is empty', async () => {
     user.login = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -71,7 +105,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email is empty', async () => {
     user.email = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -86,7 +120,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is empty', async () => {
     user.password = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -101,7 +135,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if lastName is empty', async () => {
     user.lastName = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -116,7 +150,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if firstName is empty', async () => {
     user.firstName = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -131,7 +165,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if company is empty', async () => {
     user.company = '';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -146,7 +180,7 @@ describe('CreateUserUseCase', () => {
   it('should return AlreadyExistError if email already exists', async () => {
     mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -161,7 +195,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is too weak', async () => {
     user.password = 'weakpass';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -176,7 +210,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email format is incorrect', async () => {
     user.email = 'invalidemailformat';
 
-    const result = await useCase.createUser(currentUserRole, user);
+    const result = await useCase.createUser(currentUser, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -186,18 +220,5 @@ describe('CreateUserUseCase', () => {
     }
   });
 
-  it('should return PermissionDeniedError if current user is not admin', async () => {
-    const currentUserRole = 2;
 
-    const result = await useCase.createUser(currentUserRole, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(PermissionDeniedError);
-      expect(result.error.message).toBe(
-        'Vous n’avez pas les droits pour créer un utilisateur.'
-      );
-    }
-  });
 });
