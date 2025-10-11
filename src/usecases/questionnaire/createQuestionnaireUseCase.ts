@@ -5,23 +5,30 @@ import {
   AlreadyExistError,
   NotFoundError,
   TechnicalError,
+  PermissionDeniedError,
 } from '../../errors/errors';
 import { QuestionnaireRepository } from '../../interfaces/questionnaireRepository';
 import { Questionnaire } from '../../entities/questionnaire/questionnaire';
-
-export interface CreateQuestionnaireCommand {
-  name: string;
-  description?: string;
-}
+import { CreateQuestionnaireCommand } from '../../commands/questionnaire/createQuestionnaireCommand';
+import { User } from '../../entities/user/user';
+import { RoleEnum } from '../../enums/roleEnums';
 
 export class CreateQuestionnaireUseCase {
   constructor(private readonly questionnaireRepo: QuestionnaireRepository) {}
 
   public async execute(
+    currentUser: User,
     command: CreateQuestionnaireCommand
-  ): Promise<Result<Questionnaire, AppError>> {
-    const name = command.name?.trim();
+  ): Promise<Result<void, AppError>> {
+    if (currentUser.roleId !== RoleEnum.ADMIN) {
+      return Err.of(
+        new PermissionDeniedError(
+          'Seul un administrateur peut créer un questionnaire'
+        )
+      );
+    }
 
+    const name = command.name?.trim();
     if (!name) {
       return Err.of(
         new ValidationError('Le nom du questionnaire est obligatoire')
@@ -51,9 +58,13 @@ export class CreateQuestionnaireUseCase {
     const created =
       await this.questionnaireRepo.createQuestionnaire(questionnaire);
     if (created.isErr()) {
-      return Err.of(created.error);
+      return Err.of(
+        new TechnicalError(
+          'Erreur technique lors de la création du questionnaire'
+        )
+      );
     }
 
-    return Ok.of<Questionnaire, AppError>(questionnaire);
+    return Ok.of(undefined);
   }
 }
