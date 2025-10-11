@@ -16,10 +16,12 @@ export class CreateUserUseCase {
   ) {}
 
   async createUser(
-    currentUser: User,
+    currentUserRoleId: number,
     user: User
   ): Promise<Result<void, AppError>> {
-    if (currentUser.roleId != RoleEnum.ADMIN) {
+
+    //TODO: remplacer le 1 par RoleEnum.ADMIN une fois bug corrigé
+    if (currentUserRoleId != 1) {
       return Err.of(
         new PermissionDeniedError(
           'Vous n’avez pas les droits pour créer un utilisateur.'
@@ -77,6 +79,5 @@ export class CreateUserUseCase {
 
     await this.userRepository.createUser(user);
 
-    return Ok.of(undefined);
-  }
+    return Ok.of(undefined);  }
 }
