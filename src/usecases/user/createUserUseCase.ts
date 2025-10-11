@@ -77,5 +77,6 @@ export class CreateUserUseCase {
 
     await this.userRepository.createUser(user);
 
-    return Ok.of(undefined);  }
+    return Ok.of(undefined);
+  }
 }

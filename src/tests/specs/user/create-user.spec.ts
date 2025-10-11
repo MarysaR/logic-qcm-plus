@@ -8,6 +8,7 @@ import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { Ok } from '../../../errors/result';
 import { PasswordHasher } from '../../../providers/passwordHash';
+import { RoleEnum } from '../../../enums/roleEnums';
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
@@ -15,7 +16,6 @@ describe('CreateUserUseCase', () => {
   let passwordHasher: jest.Mocked<PasswordHasher>;
   let user: User;
   let currentUser: User;
-  let currentUserRole: number;
 
   beforeEach(() => {
     mockRepository = {
@@ -72,7 +72,6 @@ describe('CreateUserUseCase', () => {
 
   it('should return PermissionDeniedError if current user is not admin', async () => {
     currentUser.roleId = RoleEnum.STAGIAIRE;
-    currentUserRole = currentUser.roleId;
 
     const result = await useCase.createUser(currentUser, user);
 
@@ -218,6 +217,4 @@ describe('CreateUserUseCase', () => {
       expect(result.error.message).toBe('Invalid email format.');
     }
   });
-
-
 });
