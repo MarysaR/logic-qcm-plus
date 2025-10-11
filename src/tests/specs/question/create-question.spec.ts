@@ -17,6 +17,7 @@ describe('Feature: CreateQuestionUseCase', () => {
 
   beforeEach(() => {
     questionRepository = {
+      getQuestionsOfQuestionnaire: jest.fn(),
       createQuestion: jest.fn(),
     };
 
