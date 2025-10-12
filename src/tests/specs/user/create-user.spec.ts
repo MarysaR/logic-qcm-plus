@@ -25,13 +25,12 @@ describe('CreateUserUseCase', () => {
       getCurrentUser: jest.fn(),
     };
 
-
-
     passwordHasher = {
-      hash: jest.fn<() => Promise<string>>().mockResolvedValue('hashedPassword'),
+      hash: jest
+        .fn<() => Promise<string>>()
+        .mockResolvedValue('hashedPassword'),
       compare: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
     };
-  
 
     user = {
       login: 'login',

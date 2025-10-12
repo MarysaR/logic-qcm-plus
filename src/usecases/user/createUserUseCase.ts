@@ -16,7 +16,7 @@ export class CreateUserUseCase {
   ) {}
 
   async createUser(
-    curentUserRoleId : number,
+    curentUserRoleId: number,
     user: User
   ): Promise<Result<void, AppError>> {
     if (curentUserRoleId != RoleEnum.ADMIN) {
