@@ -1,5 +1,4 @@
 import { UserRepository } from '../../interfaces/userRepository';
-import { User } from '../../entities/user/user';
 import {
   ValidationError,
   AlreadyExistError,
@@ -8,6 +7,7 @@ import {
 import { AppError, Err, Result, Ok } from '../../errors';
 import { PasswordHasher } from '../../providers';
 import { RoleEnum } from '../../enums/roleEnums';
+import { CreateUserCommand } from '../../commands/user/userCommand';
 
 export class CreateUserUseCase {
   constructor(
@@ -15,11 +15,9 @@ export class CreateUserUseCase {
     private readonly passwordHasher: PasswordHasher
   ) {}
 
-  async createUser(
-    curentUserRoleId: number,
-    user: User
-  ): Promise<Result<void, AppError>> {
-    if (curentUserRoleId != RoleEnum.ADMIN) {
+  async execute(command: CreateUserCommand): Promise<Result<void, AppError>> {
+    const { currentUser, newUser } = command;
+    if (currentUser != RoleEnum.ADMIN) {
       return Err.of(
         new PermissionDeniedError(
           'Vous n’avez pas les droits pour créer un utilisateur.'
@@ -28,30 +26,26 @@ export class CreateUserUseCase {
     }
 
     const requiredFields = [
-      user.login,
-      user.email,
-      user.password,
-      user.firstName,
-      user.lastName,
-      user.company,
+      newUser.login,
+      newUser.email,
+      newUser.password,
+      newUser.firstName,
+      newUser.lastName,
+      newUser.company,
     ];
 
     if (requiredFields.some((field) => !field || String(field).trim() == '')) {
-      return Err.of(
-        new ValidationError(
-          'All fields are required: login, email, password, firstName, lastName, company'
-        )
-      );
+      return Err.of(new ValidationError('Tous les champs sont obligatoires'));
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(user.email)) {
-      return Err.of(new ValidationError('Invalid email format.'));
+    if (!emailRegex.test(newUser.email)) {
+      return Err.of(new ValidationError('Email invalide'));
     }
 
     const passwordRegex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(user.password)) {
+    if (!passwordRegex.test(newUser.password)) {
       return Err.of(
         new ValidationError(
           'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
@@ -59,23 +53,21 @@ export class CreateUserUseCase {
       );
     }
 
-    const userEmailAlreadyExists = await this.userRepository.getUserByEmail(
-      user.email
+    const existingUser = await this.userRepository.getUserByEmail(
+      newUser.email
     );
-    if (userEmailAlreadyExists.isOk()) {
+    if (existingUser.isOk()) {
       return Err.of(
-        new AlreadyExistError(`L'email "${user.email}" est déjà utilisé.`)
+        new AlreadyExistError(`L'email "${newUser.email}" est déjà utilisé.`)
       );
     }
 
-    user.createdAt = new Date();
-    user.isActive = true;
+    newUser.createdAt = new Date();
+    newUser.isActive = true;
+    newUser.password = await this.passwordHasher.hash(newUser.password);
+    newUser.roleId = 2;
 
-    user.password = await this.passwordHasher.hash(user.password);
-
-    user.roleId = 2;
-
-    await this.userRepository.createUser(user);
+    await this.userRepository.createUser(newUser);
 
     return Ok.of(undefined);
   }
