@@ -9,6 +9,7 @@ import { UserRepository } from '../../../interfaces/userRepository';
 import { Ok } from '../../../errors/result';
 import { PasswordHasher } from '../../../providers/passwordHash';
 import { RoleEnum } from '../../../enums/roleEnums';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
@@ -24,10 +25,13 @@ describe('CreateUserUseCase', () => {
       getCurrentUser: jest.fn(),
     };
 
+
+
     passwordHasher = {
-      hash: jest.fn().mockResolvedValue('hashedPassword'),
-      compare: jest.fn().mockResolvedValue(true),
+      hash: jest.fn<() => Promise<string>>().mockResolvedValue('hashedPassword'),
+      compare: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
     };
+  
 
     user = {
       login: 'login',
@@ -73,7 +77,7 @@ describe('CreateUserUseCase', () => {
   it('should return PermissionDeniedError if current user is not admin', async () => {
     currentUser.roleId = RoleEnum.STAGIAIRE;
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -88,7 +92,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if a required field is empty', async () => {
     user.login = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -103,7 +107,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email is empty', async () => {
     user.email = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -118,7 +122,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is empty', async () => {
     user.password = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -133,7 +137,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if lastName is empty', async () => {
     user.lastName = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -148,7 +152,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if firstName is empty', async () => {
     user.firstName = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -163,7 +167,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if company is empty', async () => {
     user.company = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -178,7 +182,7 @@ describe('CreateUserUseCase', () => {
   it('should return AlreadyExistError if email already exists', async () => {
     mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -193,7 +197,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if password is too weak', async () => {
     user.password = 'weakpass';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
@@ -208,7 +212,7 @@ describe('CreateUserUseCase', () => {
   it('should return ValidationError if email format is incorrect', async () => {
     user.email = 'invalidemailformat';
 
-    const result = await useCase.createUser(currentUser, user);
+    const result = await useCase.createUser(currentUser.roleId, user);
 
     expect(result.isErr()).toBe(true);
 
