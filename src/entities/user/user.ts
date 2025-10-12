@@ -1,3 +1,4 @@
+import { RoleEnum } from '../../enums';
 import { Role } from '../roles/role';
 
 export interface User {
@@ -11,6 +12,6 @@ export interface User {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  roleId: number;
+  roleId: RoleEnum;
   role: Role;
 }
