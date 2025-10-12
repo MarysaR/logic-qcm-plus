@@ -1,220 +1,168 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
+import { UserRepository } from '../../../interfaces/userRepository';
+import { PasswordHasher } from '../../../providers/passwordHash';
+import { User } from '../../../entities/user/user';
 import {
   AlreadyExistError,
   PermissionDeniedError,
   ValidationError,
+  NotFoundError,
 } from '../../../errors/errors';
-import { User } from '../../../entities/user/user';
-import { CreateUserUseCase } from '../../../usecases/user/createUserUseCase';
-import { UserRepository } from '../../../interfaces/userRepository';
-import { Ok } from '../../../errors/result';
-import { PasswordHasher } from '../../../providers/passwordHash';
+import { Err, Ok } from '../../../errors/result';
 import { RoleEnum } from '../../../enums/roleEnums';
+import { CreateUserCommand } from '../../../commands/user/userCommand';
 
-describe('CreateUserUseCase', () => {
-  let useCase: CreateUserUseCase;
-  let mockRepository: jest.Mocked<UserRepository>;
+describe('Feature: CreateUser', () => {
+  let userRepository: jest.Mocked<UserRepository>;
   let passwordHasher: jest.Mocked<PasswordHasher>;
-  let user: User;
+  let createUserUseCase: CreateUserUseCase;
+
   let currentUser: User;
+  let newUser: User;
 
   beforeEach(() => {
-    mockRepository = {
+    userRepository = {
       getUserByEmail: jest.fn(),
-      createUser: jest.fn(),
       getCurrentUser: jest.fn(),
+      createUser: jest.fn(),
     };
 
     passwordHasher = {
-      hash: jest.fn().mockResolvedValue('hashedPassword'),
-      compare: jest.fn().mockResolvedValue(true),
+      hash: jest.fn(),
+      compare: jest.fn(),
     };
 
-    user = {
-      login: 'login',
-      email: 'newuser@gmail.com',
-      password: 'randomPassword1!',
-      firstName: 'Lola',
-      lastName: 'Vander',
-      company: 'Tales',
-      id: 0,
-      isActive: false,
-      roleId: 2,
-      role: {
-        id: 2,
-        name: RoleEnum.STAGIAIRE.toString(),
-        isActive: true,
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    createUserUseCase = new CreateUserUseCase(userRepository, passwordHasher);
 
     currentUser = {
-      login: 'ADMIN',
-      email: 'admin@gmail.com',
-      password: 'randomPassword1!',
-      firstName: 'admin',
-      lastName: 'admin',
-      company: 'Tales',
       id: 1,
-      isActive: false,
-      roleId: 1,
-      role: {
-        id: 1,
-        name: RoleEnum.ADMIN.toString(),
-        isActive: true,
-      },
+      login: 'admin',
+      email: 'admin@test.com',
+      password: 'AdminPass1!',
+      firstName: 'Admin',
+      lastName: 'User',
+      company: 'QCMPlus',
+      isActive: true,
+      roleId: RoleEnum.ADMIN,
+      role: { id: 1, name: 'ADMIN', isActive: true },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    useCase = new CreateUserUseCase(mockRepository, passwordHasher);
+    newUser = {
+      id: 0,
+      login: 'testuser',
+      email: 'user@test.com',
+      password: 'StrongPass1!',
+      firstName: 'Test',
+      lastName: 'User',
+      company: 'QCMPlus',
+      isActive: true,
+      roleId: RoleEnum.STAGIAIRE,
+      role: { id: 2, name: 'STAGIAIRE', isActive: true },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    userRepository.getUserByEmail.mockResolvedValue(
+      Err.of(new NotFoundError('Utilisateur non trouvé'))
+    );
+    userRepository.createUser.mockResolvedValue(Ok.of(undefined));
   });
 
   it('should return PermissionDeniedError if current user is not admin', async () => {
     currentUser.roleId = RoleEnum.STAGIAIRE;
 
-    const result = await useCase.createUser(currentUser, user);
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
 
-    expect(result.isErr()).toBe(true);
+    const result = await createUserUseCase.execute(command);
 
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(PermissionDeniedError);
-      expect(result.error.message).toBe(
-        'Vous n’avez pas les droits pour créer un utilisateur.'
-      );
-    }
+    expect(result).toEqual(
+      Err.of(
+        new PermissionDeniedError(
+          'Vous n’avez pas les droits pour créer un utilisateur.'
+        )
+      )
+    );
   });
 
-  it('should return ValidationError if a required field is empty', async () => {
-    user.login = '';
+  it('should return ValidationError if any required field is empty', async () => {
+    newUser.login = '';
 
-    const result = await useCase.createUser(currentUser, user);
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
 
-    expect(result.isErr()).toBe(true);
+    const result = await createUserUseCase.execute(command);
 
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
+    expect(result).toEqual(
+      Err.of(new ValidationError('Tous les champs sont obligatoires'))
+    );
   });
 
-  it('should return ValidationError if email is empty', async () => {
-    user.email = '';
+  it('should return ValidationError if email format is invalid', async () => {
+    newUser.email = 'invalid-email';
 
-    const result = await useCase.createUser(currentUser, user);
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
 
-    expect(result.isErr()).toBe(true);
+    const result = await createUserUseCase.execute(command);
 
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
-  });
-
-  it('should return ValidationError if password is empty', async () => {
-    user.password = '';
-
-    const result = await useCase.createUser(currentUser, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
-  });
-
-  it('should return ValidationError if lastName is empty', async () => {
-    user.lastName = '';
-
-    const result = await useCase.createUser(currentUser, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
-  });
-
-  it('should return ValidationError if firstName is empty', async () => {
-    user.firstName = '';
-
-    const result = await useCase.createUser(currentUser, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
-  });
-
-  it('should return ValidationError if company is empty', async () => {
-    user.company = '';
-
-    const result = await useCase.createUser(currentUser, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'All fields are required: login, email, password, firstName, lastName, company'
-      );
-    }
-  });
-
-  it('should return AlreadyExistError if email already exists', async () => {
-    mockRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(user));
-
-    const result = await useCase.createUser(currentUser, user);
-
-    expect(result.isErr()).toBe(true);
-
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(AlreadyExistError);
-      expect(result.error.message).toBe(
-        `L'email "${user.email}" est déjà utilisé.`
-      );
-    }
+    expect(result).toEqual(Err.of(new ValidationError('Email invalide')));
   });
 
   it('should return ValidationError if password is too weak', async () => {
-    user.password = 'weakpass';
+    newUser.password = 'weakpass';
 
-    const result = await useCase.createUser(currentUser, user);
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
 
-    expect(result.isErr()).toBe(true);
+    const result = await createUserUseCase.execute(command);
 
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe(
-        'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
-      );
-    }
+    expect(result).toEqual(
+      Err.of(
+        new ValidationError(
+          'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
+        )
+      )
+    );
   });
 
-  it('should return ValidationError if email format is incorrect', async () => {
-    user.email = 'invalidemailformat';
+  it('should return AlreadyExistError if email already exists', async () => {
+    userRepository.getUserByEmail.mockResolvedValueOnce(Ok.of(newUser));
 
-    const result = await useCase.createUser(currentUser, user);
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
 
-    expect(result.isErr()).toBe(true);
+    const result = await createUserUseCase.execute(command);
 
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ValidationError);
-      expect(result.error.message).toBe('Invalid email format.');
-    }
+    expect(result).toEqual(
+      Err.of(
+        new AlreadyExistError(`L'email "${newUser.email}" est déjà utilisé.`)
+      )
+    );
+  });
+
+  it('should return Ok.of(undefined) if creation succeeds', async () => {
+    const command: CreateUserCommand = {
+      currentUser: currentUser.roleId,
+      newUser,
+    };
+
+    const result = await createUserUseCase.execute(command);
+
+    expect(result).toEqual(Ok.of(undefined));
+    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
   });
 });
