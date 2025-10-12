@@ -10,4 +10,5 @@ export interface QuestionnaireRepository {
   createQuestionnaire(
     questionnaire: Questionnaire
   ): Promise<Result<void, AppError>>;
+  getAllQuestionnaires(): Promise<Result<Questionnaire[], AppError>>;
 }

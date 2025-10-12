@@ -8,3 +8,4 @@ export * from './question/getQuestionsOfQuestionnaireUseCase';
 export * from './question/createQuestionUseCase';
 export * from './questionnaire/getQuestionnaireByIdUseCase';
 export * from './questionnaire/createQuestionnaireUseCase';
+export * from './questionnaire/getAllQuestionnairesUseCase';
