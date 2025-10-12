@@ -7,6 +7,7 @@ import {
 } from '../../errors/errors';
 import { AppError, Err, Result, Ok } from '../../errors';
 import { PasswordHasher } from '../../providers';
+import { RoleEnum } from '../../enums/roleEnums';
 
 export class CreateUserUseCase {
   constructor(
@@ -18,8 +19,7 @@ export class CreateUserUseCase {
     currentUserRoleId: number,
     user: User
   ): Promise<Result<void, AppError>> {
-    //TODO: remplacer le 1 par RoleEnum.ADMIN une fois bug corrigé
-    if (currentUserRoleId != 1) {
+    if (currentUserRoleId != RoleEnum.ADMIN) {
       return Err.of(
         new PermissionDeniedError(
           'Vous n’avez pas les droits pour créer un utilisateur.'
