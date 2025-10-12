@@ -4,5 +4,7 @@ export * from './token/verifyTokenUseCase';
 export * from './auth/authenticateUserUseCase';
 export * from './auth/getCurrentUserUseCase';
 export * from './logout/logoutUserUseCase';
+export * from './question/getQuestionsOfQuestionnaireUseCase';
 export * from './question/createQuestionUseCase';
+export * from './questionnaire/getQuestionnaireByIdUseCase';
 export * from './questionnaire/createQuestionnaireUseCase';
