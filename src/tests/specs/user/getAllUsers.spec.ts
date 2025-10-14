@@ -46,7 +46,7 @@ describe('Feature: GetAllUsers', () => {
       id: 2,
       login: 'stagiaire',
       email: 'stagiaire@test.com',
-      password: 'StagiairePass1!',
+      password: 'fake-password',
       firstName: 'Stagiaire',
       lastName: 'Lisa',
       company: 'QCMPlus',
