@@ -19,6 +19,7 @@ describe('Feature: TokenProvider', () => {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
+      getAllUsers: jest.fn(),
     };
 
     tokenProvider = {
