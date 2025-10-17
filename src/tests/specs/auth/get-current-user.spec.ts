@@ -15,6 +15,7 @@ describe('Feature: GetCurrentUser', () => {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
+      getAllUsers: jest.fn(),
     };
 
     getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository);
