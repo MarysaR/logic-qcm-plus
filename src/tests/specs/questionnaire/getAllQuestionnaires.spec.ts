@@ -24,6 +24,7 @@ describe('Feature: GetAllQuestionnaires', () => {
       getQuestionnaireById: jest.fn(),
       createQuestionnaire: jest.fn(),
       getAllQuestionnaires: jest.fn(),
+      updateQuestionnaire: jest.fn(),
     };
 
     getAllQuestionnairesUseCase = new GetAllQuestionnairesUseCase(
