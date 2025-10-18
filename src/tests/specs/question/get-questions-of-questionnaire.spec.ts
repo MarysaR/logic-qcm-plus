@@ -19,6 +19,7 @@ describe('Feature: GetQuestionsOfQuestionnaireUseCase', () => {
     questionRepository = {
       createQuestion: jest.fn(),
       getQuestionsOfQuestionnaire: jest.fn(),
+      updateQuestion: jest.fn(),
     };
 
     useCase = new GetQuestionsOfQuestionnaireUseCase(questionRepository);
