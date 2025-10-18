@@ -8,6 +8,7 @@ export interface QuestionRepository {
   getQuestionsOfQuestionnaire(
     questionnaireId: number
   ): Promise<Result<Question[], AppError>>;
+  getQuestionById(id: number): Promise<Result<Question, AppError>>;
   createQuestion(
     command: CreateQuestionCommand
   ): Promise<Result<void, AppError>>;
