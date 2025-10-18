@@ -27,6 +27,7 @@ describe('CreateQuestionnaireUseCase', () => {
       createQuestionnaire: jest.fn(),
       getQuestionnaireById: jest.fn(),
       getAllQuestionnaires: jest.fn(),
+      updateQuestionnaire: jest.fn(),
     };
     useCase = new CreateQuestionnaireUseCase(questionnaireRepository);
     questionnaire = {

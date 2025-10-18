@@ -20,6 +20,7 @@ describe('Feature: GetQuestionnaireByIdUseCase', () => {
       getQuestionnaireByName: jest.fn(),
       createQuestionnaire: jest.fn(),
       getAllQuestionnaires: jest.fn(),
+      updateQuestionnaire: jest.fn(),
     };
 
     useCase = new GetQuestionnaireByIdUseCase(questionnaireRepository);
