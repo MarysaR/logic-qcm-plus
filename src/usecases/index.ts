@@ -9,6 +9,7 @@ export * from './question/getQuestionsOfQuestionnaireUseCase';
 export * from './question/getQuestionByIdUseCase';
 export * from './question/createQuestionUseCase';
 export * from './question/updateQuestionUseCase';
+export * from './question/deleteQuestionUseCase';
 export * from './questionnaire/getQuestionnaireByIdUseCase';
 export * from './questionnaire/createQuestionnaireUseCase';
 export * from './questionnaire/getAllQuestionnairesUseCase';
