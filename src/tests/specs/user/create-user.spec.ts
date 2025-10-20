@@ -27,6 +27,7 @@ describe('Feature: CreateUser', () => {
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
+      updateUser: jest.fn(),
     };
 
     passwordHasher = {

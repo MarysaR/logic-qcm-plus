@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { GetCurrentUserUseCase } from '../../../usecases/auth/getCurrentUserUseCase';
 import { NotFoundError } from '../../../errors/errors';
@@ -16,6 +16,7 @@ describe('Feature: GetCurrentUser', () => {
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
+      updateUser: jest.fn(),
     };
 
     getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository);

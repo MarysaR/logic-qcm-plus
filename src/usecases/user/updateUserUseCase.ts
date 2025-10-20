@@ -9,13 +9,14 @@ import { hasRoles } from '../../utils/hasRoles';
 export class UpdateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
-  async execute(currentUser: User, updatedUser: Partial<User>): Promise<Result<User, AppError>> {
-    if (!currentUser) {
-      return Err.of(new ValidationError('Utilisateur courant manquant'));
-    }
+  async execute(currentUser: User, updatedUser: User): Promise<Result<User, AppError>> {
 
-    if (!hasRoles(currentUser, RoleEnum.ADMIN)) {
-      return Err.of(new PermissionDeniedError('Seul un administrateur peut modifier un utilisateur'));
+    if (currentUser.roleId != RoleEnum.ADMIN) {
+      return Err.of(
+        new PermissionDeniedError(
+          'Seul un administrateur peut modifier un questionnaire'
+        )
+      );
     }
 
     if (!updatedUser.id) {

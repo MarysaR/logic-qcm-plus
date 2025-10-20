@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { TokenProvider } from '../../../providers/tokenProvider';
 import { AuthenticateUserUseCase } from '../../../usecases/auth/authenticateUserUseCase';
@@ -20,6 +20,7 @@ describe('Feature: TokenProvider', () => {
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
+      updateUser: jest.fn(),
     };
 
     tokenProvider = {
