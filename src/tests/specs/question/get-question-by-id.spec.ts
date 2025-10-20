@@ -25,6 +25,7 @@ describe('Feature: GetQuestionByIdUseCase', () => {
       getQuestionById: jest.fn(),
       createQuestion: jest.fn(),
       updateQuestion: jest.fn(),
+      deleteQuestion: jest.fn(),
     };
 
     getQuestionByIdUseCase = new GetQuestionByIdUseCase(questionRepository);
