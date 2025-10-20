@@ -71,7 +71,7 @@ describe('Feature: UpdateUserUseCase', () => {
   it('should return PermissionDeniedError if current user is not admin', async () => {
     const nonAdminUser = { ...adminUser, roleId: RoleEnum.STAGIAIRE };
 
-    const result = await useCase.execute(git , updatedUser);
+    const result = await useCase.execute(nonAdminUser, updatedUser);
 
     expect(result).toEqual(
       Err.of(
@@ -84,7 +84,7 @@ describe('Feature: UpdateUserUseCase', () => {
   });
 
   it('should return ValidationError if updated user has no ID', async () => {
-    const invalidUser = { ...updatedUser, id: undefined as any };
+    const invalidUser = { ...updatedUser, id: 0 };
 
     const result = await useCase.execute(adminUser, invalidUser);
 
