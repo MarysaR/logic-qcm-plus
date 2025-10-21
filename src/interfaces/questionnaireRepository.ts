@@ -15,4 +15,5 @@ export interface QuestionnaireRepository {
   updateQuestionnaire(
     command: UpdateQuestionnaireCommand
   ): Promise<Result<Questionnaire, AppError>>;
+  deleteQuestionnaire(id: number): Promise<Result<void, AppError>>;
 }

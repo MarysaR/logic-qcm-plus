@@ -14,3 +14,4 @@ export * from './questionnaire/getQuestionnaireByIdUseCase';
 export * from './questionnaire/createQuestionnaireUseCase';
 export * from './questionnaire/getAllQuestionnairesUseCase';
 export * from './questionnaire/updateQuestionnaireUseCase';
+export * from './questionnaire/deleteQuestionnaireUseCase';
