@@ -34,7 +34,7 @@ describe('Feature: UpdateUserUseCase', () => {
       .withLastName('User')
       .withLogin('admin')
       .withEmail('admin@example.com')
-      .withPassword('Abcdef1!')
+      .withPassword('AdminPass1!')
       .withCompany('Socomec')
       .withRole(RoleEnum.ADMIN)
       .build();
@@ -45,7 +45,7 @@ describe('Feature: UpdateUserUseCase', () => {
       .withLastName('User')
       .withLogin('updatedUser')
       .withEmail('updated@example.com')
-      .withPassword('Xyzabc2!')
+      .withPassword('StrongPass1!')
       .withCompany('Socomec')
       .withRole(RoleEnum.STAGIAIRE)
       .build();

@@ -22,9 +22,8 @@ export const userBuilder = ({
   lastName = 'User',
   login = 'testuser',
   email = 'test@example.com',
-  // Mot de passe conforme: 8+ caractères, 1 majuscule, 1 chiffre, 1 spécial
-  password = 'Abcdef1!',
-  company = 'Socomec',
+  password = 'hashed-secret',
+  company,
   isActive = true,
   roleId = RoleEnum.STAGIAIRE,
   role: roleValue = {
