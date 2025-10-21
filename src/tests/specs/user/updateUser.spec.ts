@@ -151,7 +151,6 @@ describe('Feature: UpdateUserUseCase', () => {
     expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
   });
 
-  // Tests spécifiques ajoutés pour company et password
   it('should return ValidationError when company is empty', async () => {
     const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
     const userToUpdate = { ...userBuilder().withId(12).build(), company: '' };
@@ -180,7 +179,7 @@ describe('Feature: UpdateUserUseCase', () => {
     const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
     const userToUpdate = {
       ...userBuilder().withId(14).build(),
-      password: 'abcdefghi',
+      password: 'fake-mot-de-passe',
       company: 'SomeCompany',
     };
     const result = await useCase.execute(admin, userToUpdate);
