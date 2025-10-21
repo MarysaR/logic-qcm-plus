@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { UpdateUserUseCase } from '../../../usecases/user/updateUseCase';
+import { UpdateUserUseCase } from '../../../usecases/user/updateUserUseCase';
 import { UserRepository } from '../../../interfaces/userRepository';
 import { User } from '../../../entities/user/user';
 import { RoleEnum } from '../../../enums/roleEnums';
