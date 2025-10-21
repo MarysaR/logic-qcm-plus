@@ -29,6 +29,7 @@ describe('Feature: UpdateQuestionnaireUseCase', () => {
       createQuestionnaire: jest.fn(),
       getAllQuestionnaires: jest.fn(),
       updateQuestionnaire: jest.fn(),
+      deleteQuestionnaire: jest.fn(),
     };
 
     useCase = new UpdateQuestionnaireUseCase(questionnaireRepository);
