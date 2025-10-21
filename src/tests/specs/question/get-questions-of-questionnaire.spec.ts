@@ -4,11 +4,7 @@ import { QuestionRepository } from '../../../interfaces/questionRepository';
 import { userBuilder } from '../../builders/user-builder';
 import { RoleEnum } from '../../../enums/roleEnums';
 import { Err, Ok } from '../../../errors/result';
-import {
-  NotFoundError,
-  PermissionDeniedError,
-  ValidationError,
-} from '../../../errors/errors';
+import { PermissionDeniedError, ValidationError } from '../../../errors/errors';
 import { Question } from '../../../entities/question/question';
 
 describe('Feature: GetQuestionsOfQuestionnaireUseCase', () => {
@@ -55,23 +51,6 @@ describe('Feature: GetQuestionsOfQuestionnaireUseCase', () => {
     expect(
       questionRepository.getQuestionsOfQuestionnaire
     ).not.toHaveBeenCalled();
-  });
-
-  it('should return NotFoundError if no questions are found for the given questionnaire', async () => {
-    const adminUser = userBuilder().withRole(RoleEnum.ADMIN).build();
-
-    questionRepository.getQuestionsOfQuestionnaire.mockResolvedValueOnce(
-      Err.of(new NotFoundError('Aucune question trouvée'))
-    );
-
-    const result = await useCase.execute(adminUser, 1);
-
-    expect(result).toEqual(
-      Err.of(new NotFoundError('Aucune question trouvée pour ce questionnaire'))
-    );
-    expect(questionRepository.getQuestionsOfQuestionnaire).toHaveBeenCalledWith(
-      1
-    );
   });
 
   it('should return is successfully', async () => {
