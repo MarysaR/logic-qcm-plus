@@ -1,5 +1,6 @@
 export * from './user/createUserUseCase';
 export * from './user/getAllUsersUseCase';
+export * from './user/updateUserUseCase';
 export * from './token/generateTokenUseCase';
 export * from './token/verifyTokenUseCase';
 export * from './auth/authenticateUserUseCase';
