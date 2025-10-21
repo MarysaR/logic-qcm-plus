@@ -51,20 +51,20 @@ describe('Feature: CreateQuestionUseCase', () => {
     expect(questionRepository.createQuestion).not.toHaveBeenCalled();
   });
 
-  it('should return ValidationError if less than 2 answers are provided', async () => {
+  it('should return ValidationError if no answer is provided', async () => {
     const adminUser = userBuilder().withRole(RoleEnum.ADMIN).build();
 
     const command: CreateQuestionCommand = {
       label: 'Quelle est la capitale de la France ?',
       questionnaireId: 1,
-      answers: [{ text: 'Paris', isCorrect: true }],
+      answers: [],
     };
 
     const result = await useCase.execute(adminUser, command);
 
     expect(result).toEqual(
       Err.of(
-        new ValidationError('Une question doit avoir entre 2 et 4 réponses')
+        new ValidationError('Une question doit avoir entre 1 et 4 réponses')
       )
     );
     expect(questionRepository.createQuestion).not.toHaveBeenCalled();
@@ -113,7 +113,7 @@ describe('Feature: CreateQuestionUseCase', () => {
 
     expect(result).toEqual(
       Err.of(
-        new ValidationError('Une question doit avoir entre 2 et 4 réponses')
+        new ValidationError('Une question doit avoir entre 1 et 4 réponses')
       )
     );
     expect(questionRepository.createQuestion).not.toHaveBeenCalled();

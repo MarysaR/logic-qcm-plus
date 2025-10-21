@@ -25,9 +25,9 @@ export class CreateQuestionUseCase {
       );
     }
 
-    if (command.answers.length < 2 || command.answers.length > 4) {
+    if (command.answers.length < 1 || command.answers.length > 4) {
       return Err.of(
-        new ValidationError('Une question doit avoir entre 2 et 4 réponses')
+        new ValidationError('Une question doit avoir entre 1 et 4 réponses')
       );
     }
 
