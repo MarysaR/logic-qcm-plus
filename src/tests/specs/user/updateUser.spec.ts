@@ -179,7 +179,7 @@ describe('Feature: UpdateUserUseCase', () => {
     const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
     const userToUpdate = {
       ...userBuilder().withId(14).build(),
-      password: 'StrongPass!',
+      password: 'StrongPass',
       company: 'SomeCompany',
     };
     const result = await useCase.execute(admin, userToUpdate);
