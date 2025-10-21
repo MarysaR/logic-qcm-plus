@@ -20,6 +20,7 @@ describe('Feature: TokenProvider', () => {
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
+      updateUser: jest.fn(),
     };
 
     tokenProvider = {
