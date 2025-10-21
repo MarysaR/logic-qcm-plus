@@ -9,6 +9,7 @@ import {
   TechnicalError,
   ValidationError,
 } from '../../../errors/errors';
+import { userBuilder } from '../../builders/user-builder';
 
 describe('Feature: UpdateUserUseCase', () => {
   let mockUserRepo: jest.Mocked<UserRepository>;
@@ -27,45 +28,27 @@ describe('Feature: UpdateUserUseCase', () => {
 
     useCase = new UpdateUserUseCase(mockUserRepo);
 
-    adminUser = {
-      id: 1,
-      firstName: 'Admin',
-      lastName: 'User',
-      login: 'admin',
-      email: 'admin@example.com',
-      password: 'hashed',
-      company: 'Socomec',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      roleId: RoleEnum.ADMIN,
-      role: {
-        id: RoleEnum.ADMIN,
-        name: 'Admin',
-        description: 'Admin role',
-        isActive: true,
-      },
-    };
+    adminUser = userBuilder()
+      .withId(1)
+      .withFirstName('Admin')
+      .withLastName('User')
+      .withLogin('admin')
+      .withEmail('admin@example.com')
+      .withPassword('Abcdef1!')
+      .withCompany('Socomec')
+      .withRole(RoleEnum.ADMIN)
+      .build();
 
-    updatedUser = {
-      id: 2,
-      firstName: 'Updated',
-      lastName: 'User',
-      login: 'updatedUser',
-      email: 'updated@example.com',
-      password: 'newHashedPassword',
-      company: 'Socomec',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      roleId: RoleEnum.STAGIAIRE,
-      role: {
-        id: RoleEnum.STAGIAIRE,
-        name: 'Stagiaire',
-        description: 'Stagiaire role',
-        isActive: true,
-      },
-    };
+    updatedUser = userBuilder()
+      .withId(2)
+      .withFirstName('Updated')
+      .withLastName('User')
+      .withLogin('updatedUser')
+      .withEmail('updated@example.com')
+      .withPassword('Xyzabc2!')
+      .withCompany('Socomec')
+      .withRole(RoleEnum.STAGIAIRE)
+      .build();
   });
 
   it('should return PermissionDeniedError if current user is not admin', async () => {
@@ -118,5 +101,86 @@ describe('Feature: UpdateUserUseCase', () => {
 
     expect(result).toEqual(Ok.of(updatedUser));
     expect(mockUserRepo.updateUser).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it('should return ValidationError when firstName is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(5).build(), firstName: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(Err.of(new ValidationError('Prénom obligatoire')));
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when lastName is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(5).build(), lastName: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(Err.of(new ValidationError('Nom obligatoire')));
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when login is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(5).build(), login: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(Err.of(new ValidationError('Login obligatoire')));
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when email is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(5).build(), email: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(Err.of(new ValidationError('Email obligatoire')));
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when email format is invalid', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = {
+      ...userBuilder().withId(5).build(),
+      email: 'invalid-email-format',
+    };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(Err.of(new ValidationError('Email invalide')));
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  // Tests spécifiques ajoutés pour company et password
+  it('should return ValidationError when company is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(12).build(), company: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(
+      Err.of(new ValidationError('Entreprise obligatoire'))
+    );
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when password is empty', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = { ...userBuilder().withId(13).build(), password: '' };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(
+      Err.of(new ValidationError('Mot de passe obligatoire'))
+    );
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return ValidationError when password lacks complexity', async () => {
+    const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
+    const userToUpdate = {
+      ...userBuilder().withId(14).build(),
+      password: 'abcdefghi',
+    };
+    const result = await useCase.execute(admin, userToUpdate);
+    expect(result).toEqual(
+      Err.of(
+        new ValidationError(
+          'Mot de passe invalide (8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial)'
+        )
+      )
+    );
+    expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
   });
 });

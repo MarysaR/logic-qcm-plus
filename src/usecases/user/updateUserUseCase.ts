@@ -9,6 +9,10 @@ import {
 } from '../../errors/errors';
 import { RoleEnum } from '../../enums/roleEnums';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
+
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
 export class UpdateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
@@ -27,6 +31,40 @@ export class UpdateUserUseCase {
     if (!updatedUser.id) {
       return Err.of(
         new ValidationError('ID de l’utilisateur à modifier manquant')
+      );
+    }
+
+    if (!updatedUser.firstName || updatedUser.firstName.trim() == '') {
+      return Err.of(new ValidationError('Prénom obligatoire'));
+    }
+    if (!updatedUser.lastName || updatedUser.lastName.trim() == '') {
+      return Err.of(new ValidationError('Nom obligatoire'));
+    }
+
+    if (!updatedUser.login || updatedUser.login.trim() == '') {
+      return Err.of(new ValidationError('Login obligatoire'));
+    }
+
+    if (!updatedUser.company || updatedUser.company.trim() == '') {
+      return Err.of(new ValidationError('Entreprise obligatoire'));
+    }
+
+    if (!updatedUser.email || updatedUser.email.trim() == '') {
+      return Err.of(new ValidationError('Email obligatoire'));
+    }
+
+    if (!EMAIL_REGEX.test(updatedUser.email)) {
+      return Err.of(new ValidationError('Email invalide'));
+    }
+
+    if (!updatedUser.password || updatedUser.password.trim() == '') {
+      return Err.of(new ValidationError('Mot de passe obligatoire'));
+    }
+    if (!PASSWORD_REGEX.test(updatedUser.password)) {
+      return Err.of(
+        new ValidationError(
+          'Mot de passe invalide (8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial)'
+        )
       );
     }
 
