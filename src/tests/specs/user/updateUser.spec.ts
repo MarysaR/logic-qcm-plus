@@ -77,32 +77,6 @@ describe('Feature: UpdateUserUseCase', () => {
     expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
   });
 
-  it('should return TechnicalError if repository fails', async () => {
-    mockUserRepo.updateUser.mockResolvedValueOnce(
-      Err.of(new TechnicalError('DB error'))
-    );
-
-    const result = await useCase.execute(adminUser, updatedUser);
-
-    expect(result).toEqual(
-      Err.of(
-        new TechnicalError(
-          'Erreur technique lors de la mise à jour de l’utilisateur'
-        )
-      )
-    );
-    expect(mockUserRepo.updateUser).toHaveBeenCalledWith(updatedUser);
-  });
-
-  it('should return Ok with updated user on success', async () => {
-    mockUserRepo.updateUser.mockResolvedValueOnce(Ok.of(updatedUser));
-
-    const result = await useCase.execute(adminUser, updatedUser);
-
-    expect(result).toEqual(Ok.of(updatedUser));
-    expect(mockUserRepo.updateUser).toHaveBeenCalledWith(updatedUser);
-  });
-
   it('should return ValidationError when firstName is empty', async () => {
     const admin = userBuilder().withRole(RoleEnum.ADMIN).build();
     const userToUpdate = { ...userBuilder().withId(5).build(), firstName: '' };
@@ -191,5 +165,31 @@ describe('Feature: UpdateUserUseCase', () => {
       )
     );
     expect(mockUserRepo.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('should return TechnicalError if repository fails', async () => {
+    mockUserRepo.updateUser.mockResolvedValueOnce(
+      Err.of(new TechnicalError('DB error'))
+    );
+
+    const result = await useCase.execute(adminUser, updatedUser);
+
+    expect(result).toEqual(
+      Err.of(
+        new TechnicalError(
+          'Erreur technique lors de la mise à jour de l’utilisateur'
+        )
+      )
+    );
+    expect(mockUserRepo.updateUser).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it('should return Ok with updated user on success', async () => {
+    mockUserRepo.updateUser.mockResolvedValueOnce(Ok.of(updatedUser));
+
+    const result = await useCase.execute(adminUser, updatedUser);
+
+    expect(result).toEqual(Ok.of(updatedUser));
+    expect(mockUserRepo.updateUser).toHaveBeenCalledWith(updatedUser);
   });
 });
