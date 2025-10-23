@@ -23,6 +23,7 @@ describe('Feature: GetAllUsers', () => {
       getUserByEmail: jest.fn(),
       getCurrentUser: jest.fn(),
       createUser: jest.fn(),
+      updateUser: jest.fn(),
     };
 
     getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
